@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Prints the current volume or 🔇 if muted. Uses PulseAudio by default,
+# uncomment the ALSA lines if you remove PulseAudio.
+
+volstat="$(pactl list sinks)"
+# volstat="$(amixer get Master)" # ALSA only equivalent.
+
+echo "$volstat" | grep -q "oui" && printf "婢 \\n" && exit
+# echo "$volstat" | grep "\[off\]" >/dev/null && printf "🔇\\n" && exit # ALSA
+
+vol="$(echo "$volstat" | grep '[0-9]\+%' | sed "s,.* \([0-9]\+\)%.*,\1,;1q")"
+# vol=$(echo "$volstat" | grep -o "\[[0-9]\+%\]" | sed "s/[^0-9]*//g;1q") # ALSA
+
+if [ "$vol" -gt "80" ]; then
+	icon=""
+elif [ "$vol" -lt "80" ]; then
+    icon="墳"
+elif [ "$vol" -lt  "15" ]; then
+	icon=""
+fi
+
+printf "%s %s%%\\n" "$icon" "$vol"

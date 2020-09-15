@@ -1,0 +1,30 @@
+#!/bin/sh
+
+capacity=$(cat /sys/class/power_supply/BAT0/capacity) || exit
+
+if [ "$capacity" = '100' ]; then
+    icon="^r0,10,2,4^^r2,7,22,10^^c#000000^^r3,8,20,8^^c#3b913b^^r3,8,20,8^^d^^f24^"
+elif [ "$capacity" -le 99 ] && [ "$capacity" -ge 90 ]; then
+    icon="^r0,10,2,4^^r2,7,22,10^^c#000000^^r3,8,20,8^^c#3b913b^^r8,8,15,8^^d^^f24^"
+elif [ "$capacity" -le 89 ] && [ "$capacity" -ge 80 ]; then
+    icon="^r0,10,2,4^^r2,7,22,10^^c#000000^^r3,8,20,8^^c#3b913b^^r10,8,13,8^^d^^f24^"
+elif [ "$capacity" -le 79 ] && [ "$capacity" -ge 70 ]; then
+    icon="^r0,10,2,4^^r2,7,22,10^^c#000000^^r3,8,20,8^^c#3b913b^^r11,8,12,8^^d^^f24^"
+elif [ "$capacity" -le 69 ] && [ "$capacity" -ge 60 ]; then
+    icon="^r0,10,2,4^^r2,7,22,10^^c#000000^^r3,8,20,8^^c#edcb42^^r12,8,11,8^^d^^f24^"
+elif [ "$capacity" -le 59 ] && [ "$capacity" -ge 50 ]; then
+    icon="^r0,10,2,4^^r2,7,22,10^^c#000000^^r3,8,20,8^^c#edcb42^^r13,8,10,8^^d^^f24^"
+elif [ "$capacity" -le 49 ] && [ "$capacity" -ge 40 ]; then
+    icon="^r0,10,2,4^^r2,7,22,10^^c#000000^^r3,8,20,8^^c#d67526^^r14,8,9,8^^d^^f24^"
+elif [ "$capacity" -le 39 ] && [ "$capacity" -ge 30 ]; then
+    icon="^r0,10,2,4^^r2,7,22,10^^c#000000^^r3,8,20,8^^c#d67526^^r15,8,8,8^^d^^f24^"
+elif [ "$capacity" -le 29 ] && [ "$capacity" -ge 20 ]; then
+    icon="^r0,10,2,4^^r2,7,22,10^^c#000000^^r3,8,20,8^^c#e24c0b^^r16,8,7,8^^d^^f24^"
+elif [ "$capacity" -le 19 ] && [ "$capacity" -ge 10 ]; then
+    icon="^r0,10,2,4^^r2,7,22,10^^c#000000^^r3,8,20,8^^c#e52600^^r17,8,6,8^^d^^f24^"
+elif [ "$capacity" -le 9 ] && [ "$capacity" -ge 1 ]; then
+    icon="^r0,10,2,4^^r2,7,22,10^^c#000000^^r3,8,20,8^^c#d10404^^r18,8,5,8^^d^^f24^"
+fi
+
+printf "%s %s%%\n" "$icon" "$capacity"
+

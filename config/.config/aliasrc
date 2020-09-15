@@ -1,0 +1,42 @@
+#!/bin/sh
+
+
+# Verbosity and settings that you pretty much just always are going to want.
+alias \
+	cp="cp -iv" \
+	mv="mv -iv" \
+	rm="rm -v" \
+	mkd="mkdir -pv" \
+
+# Colorize commands when possible.
+alias \
+	ls="ls -hN --color=auto --group-directories-first" \
+	ll="ls -Al -hN --color=auto --group-directories-first" \
+	grep="grep --color=auto" \
+	diff="diff --color=auto" \
+	ccat="highlight --out-format=ansi"
+	tree="tree -C" 
+
+# These common commands are just too long! Abbreviate them.
+alias \
+	v='vim -c "let g:tty='\''$(tty)'\''"' \
+	ka="killall" \
+	lg="lazygit" \
+	g="git" \
+	trem="transmission-remote" \
+	sdn="sudo shutdown -h now" \
+	p="sudo pacman" \
+	gs="git status" \
+	ga="git add" \
+	gc="git commit" \
+	gph="git push" \
+	gpl="git pull" \
+	gr="git rm" \
+	..="cd .."
+
+# Some other stuff
+alias \
+	trc="transmission-remote-cli" \
+	abook="abook --config "${XDG_CONFIG_HOME:-$HOME/.config}"/abook/abookrc --datafile "${XDG_DATA_HOME:-$HOME/.local/share}"/abook/addressbook" \
+	tmux="tmux -f "${XDG_CONFIG_HOME:-$HOME/.config}"/tmux/tmux.conf" \
+	mbsync="mbsync -c $XDG_CONFIG_HOME/isync/mbsyncrc"

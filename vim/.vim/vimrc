@@ -1,0 +1,15 @@
+filetype plugin indent on
+syntax on
+set backspace=indent,eol,start
+set hidden
+set noswapfile
+set clipboard=unnamedplus
+set cursorline
+
+set number
+set number relativenumber
+
+let $RTP=split(&runtimepath, ',')[0]
+let $RC="$HOME/.vim/vimrc"
+
+set path=.,**

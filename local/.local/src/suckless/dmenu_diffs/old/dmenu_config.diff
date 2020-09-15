@@ -1,0 +1,91 @@
+diff --git a/LICENSE b/LICENSE
+index 9762166..6ed8ad3 100644
+--- a/LICENSE
++++ b/LICENSE
+@@ -9,7 +9,7 @@ MIT/X Consortium License
+ © 2009 Evan Gates <evan.gates@gmail.com>
+ © 2010-2012 Connor Lane Smith <cls@lubutu.com>
+ © 2014-2019 Hiltjo Posthuma <hiltjo@codemadness.org>
+-© 2015-2019 Quentin Rameau <quinq@fifth.space>
++© 2015-2018 Quentin Rameau <quinq@fifth.space>
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this software and associated documentation files (the "Software"),
+diff --git a/config.def.h b/config.def.h
+index 1edb647..1100ce0 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -4,14 +4,15 @@
+ static int topbar = 1;                      /* -b  option; if 0, dmenu appears at bottom     */
+ /* -fn option overrides fonts[0]; default X11 font or font set */
+ static const char *fonts[] = {
+-	"monospace:size=10"
++	"Fira Code:size=11",
++	"JoyPixels:pixelsize=11:antialias=true:autohint=true"
+ };
+ static const char *prompt      = NULL;      /* -p  option; prompt to the left of input field */
+ static const char *colors[SchemeLast][2] = {
+ 	/*     fg         bg       */
+-	[SchemeNorm] = { "#bbbbbb", "#222222" },
+-	[SchemeSel] = { "#eeeeee", "#005577" },
+-	[SchemeOut] = { "#000000", "#00ffff" },
++	[SchemeNorm] = { "#ffffff", "#030303" },
++	[SchemeSel]  = { "#ff009e", "#030303" },
++	[SchemeOut]  = { "#000000", "#00ffff" },
+ };
+ /* -l option; if nonzero, dmenu uses vertical list with given number of lines */
+ static unsigned int lines      = 0;
+diff --git a/dmenu.c b/dmenu.c
+index 65f25ce..6b8f51b 100644
+--- a/dmenu.c
++++ b/dmenu.c
+@@ -553,14 +553,9 @@ run(void)
+ 	XEvent ev;
+ 
+ 	while (!XNextEvent(dpy, &ev)) {
+-		if (XFilterEvent(&ev, win))
++		if (XFilterEvent(&ev, None))
+ 			continue;
+ 		switch(ev.type) {
+-		case DestroyNotify:
+-			if (ev.xdestroywindow.window != win)
+-				break;
+-			cleanup();
+-			exit(1);
+ 		case Expose:
+ 			if (ev.xexpose.count == 0)
+ 				drw_map(drw, win, 0, 0, mw, mh);
+@@ -664,17 +659,15 @@ setup(void)
+ 	                    CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
+ 	XSetClassHint(dpy, win, &ch);
+ 
+-
+-	/* input methods */
+-	if ((xim = XOpenIM(dpy, NULL, NULL, NULL)) == NULL)
+-		die("XOpenIM failed: could not open input device");
+-
++	/* open input methods */
++	xim = XOpenIM(dpy, NULL, NULL, NULL);
+ 	xic = XCreateIC(xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
+ 	                XNClientWindow, win, XNFocusWindow, win, NULL);
+ 
+ 	XMapRaised(dpy, win);
++	XSetInputFocus(dpy, win, RevertToParent, CurrentTime);
+ 	if (embed) {
+-		XSelectInput(dpy, parentwin, FocusChangeMask | SubstructureNotifyMask);
++		XSelectInput(dpy, parentwin, FocusChangeMask);
+ 		if (XQueryTree(dpy, parentwin, &dw, &w, &dws, &du) && dws) {
+ 			for (i = 0; i < du && dws[i] != win; ++i)
+ 				XSelectInput(dpy, dws[i], FocusChangeMask);
+@@ -738,6 +731,8 @@ main(int argc, char *argv[])
+ 
+ 	if (!setlocale(LC_CTYPE, "") || !XSupportsLocale())
+ 		fputs("warning: no locale support\n", stderr);
++	if (!XSetLocaleModifiers(""))
++		fputs("warning: no locale modifiers support\n", stderr);
+ 	if (!(dpy = XOpenDisplay(NULL)))
+ 		die("cannot open display");
+ 	screen = DefaultScreen(dpy);
+diff --git a/dmenu_path b/dmenu_path
+old mode 100755
+new mode 100644

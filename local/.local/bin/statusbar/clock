@@ -1,0 +1,7 @@
+#!/bin/sh
+
+clock=$(date '+%a %d %b,%H:%M' | sed 's/[a-z]/\U&/;s/\.//2;s/ [a-z]/\U&/')
+
+# icon=""
+
+printf '%s\n' "$clock"

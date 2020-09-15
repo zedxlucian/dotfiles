@@ -1,0 +1,8 @@
+#!/bin/sh
+
+conname=$(nmcli -a | grep 'Wired connection' | awk 'NR==1{print $1}')
+icon=" "
+
+[ "$conname" = "" ] && conname=$(nmcli -t -f active,ssid dev wifi | grep '^oui' | sed 's/^oui://')
+
+printf "%s %s\n" "$icon" "$conname"

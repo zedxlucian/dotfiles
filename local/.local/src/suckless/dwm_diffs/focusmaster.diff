@@ -1,0 +1,22 @@
+diff --git a/drw.c b/drw.c
+index 4cdbcbe..8fd1ca4 100644
+--- a/drw.c
++++ b/drw.c
+@@ -95,7 +95,6 @@ drw_free(Drw *drw)
+ {
+ 	XFreePixmap(drw->dpy, drw->drawable);
+ 	XFreeGC(drw->dpy, drw->gc);
+-	drw_fontset_free(drw->fonts);
+ 	free(drw);
+ }
+ 
+diff --git a/focusmaster.c b/focusmaster.c
+new file mode 100644
+index 0000000..9b397c7
+--- /dev/null
++++ b/focusmaster.c
+@@ -0,0 +1,4 @@
++static void
++focusmaster(const Arg *arg) {
++	focus(nexttiled(selmon->clients));
++}

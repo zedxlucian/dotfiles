@@ -1,0 +1,7 @@
+#!/bin/sh
+
+furp() {
+    free | { read z; read a b c d; echo $((100*$c/$b)) ; }
+}
+
+furp | sed 's/^/\[  MEM /;s/$/% /'

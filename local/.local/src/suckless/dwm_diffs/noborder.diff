@@ -1,0 +1,30 @@
+diff --git a/drw.c b/drw.c
+index 4cdbcbe..8fd1ca4 100644
+--- a/drw.c
++++ b/drw.c
+@@ -95,7 +95,6 @@ drw_free(Drw *drw)
+ {
+ 	XFreePixmap(drw->dpy, drw->drawable);
+ 	XFreeGC(drw->dpy, drw->gc);
+-	drw_fontset_free(drw->fonts);
+ 	free(drw);
+ }
+ 
+diff --git a/dwm.c b/dwm.c
+index 9fd0286..e1a9e80 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -1283,6 +1283,13 @@ resizeclient(Client *c, int x, int y, int w, int h)
+ 	c->oldw = c->w; c->w = wc.width = w;
+ 	c->oldh = c->h; c->h = wc.height = h;
+ 	wc.border_width = c->bw;
++	if ((nexttiled(c->mon->clients) == c && !nexttiled(c->next))
++	    || &monocle == c->mon->lt[c->mon->sellt]->arrange) {
++		c->w = wc.width += c->bw * 2;
++		c->h = wc.height += c->bw * 2;
++		wc.border_width = 0;
++	}
++
+ 	XConfigureWindow(dpy, c->win, CWX|CWY|CWWidth|CWHeight|CWBorderWidth, &wc);
+ 	configure(c);
+ 	XSync(dpy, False);

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+[[ -f ~/.config/zsh/.zprofile ]] && source ~/.config/zsh/.zprofile

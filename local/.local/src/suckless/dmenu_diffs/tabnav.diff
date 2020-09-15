@@ -1,0 +1,40 @@
+diff --git a/dmenu.c b/dmenu.c
+index 65f25ce..5ef126d 100644
+--- a/dmenu.c
++++ b/dmenu.c
+@@ -487,13 +487,17 @@ insert:
+ 		}
+ 		break;
+ 	case XK_Tab:
+-		if (!sel)
+-			return;
+-		strncpy(text, sel->text, sizeof text - 1);
+-		text[sizeof text - 1] = '\0';
+-		cursor = strlen(text);
+-		match();
++		if (sel && sel->right && (sel = sel->right) == next) {
++			curr = next;
++			calcoffsets();
++		}
+ 		break;
++	case XK_ISO_Left_Tab:
++        if(sel && sel->left && (sel = sel->left)->right == curr) {
++            curr = prev;
++            calcoffsets();
++        }
++        break;
+ 	}
+ 
+ draw:
+diff --git a/drw.c b/drw.c
+index 4cdbcbe..8fd1ca4 100644
+--- a/drw.c
++++ b/drw.c
+@@ -95,7 +95,6 @@ drw_free(Drw *drw)
+ {
+ 	XFreePixmap(drw->dpy, drw->drawable);
+ 	XFreeGC(drw->dpy, drw->gc);
+-	drw_fontset_free(drw->fonts);
+ 	free(drw);
+ }
+ 

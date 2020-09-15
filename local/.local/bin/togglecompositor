@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# If picom is running, will kill, else will start.
+if pidof "picom";
+then
+	killall picom && notify-send "Transparency off."
+else
+	picom -b && notify-send "Transparency on."
+fi

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+chosen="$( printf "shutdown\nreboot\nlock\n" | dmenu -i -c -l 4 -nb "#cc241d" -sb "#fb4934" -nf "#282828" )"
+case "$chosen" in
+    "shutdown")
+        sudo shutdown -h now
+        ;;
+    "reboot")
+        sudo reboot
+        ;;
+    "lock")
+        betterlockscreen -l blur
+        ;;
+esac

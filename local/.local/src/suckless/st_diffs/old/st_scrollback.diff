@@ -1,0 +1,729 @@
+diff --git a/FAQ b/FAQ
+index 0f9609d..610f920 100644
+--- a/FAQ
++++ b/FAQ
+@@ -1,6 +1,6 @@
+ ## Why does st not handle utmp entries?
+ 
+-Use the excellent tool of [utmp](https://git.suckless.org/utmp/) for this task.
++Use the excellent tool of [utmp](http://git.suckless.org/utmp/) for this task.
+ 
+ 
+ ## Some _random program_ complains that st is unknown/not recognised/unsupported/whatever!
+@@ -18,6 +18,13 @@ you can manually run `tic -sx st.info`.
+   another terminal. In that case see the question about terminfo.
+ 
+ 
++## I get some weird glitches/visual bug on _random program_!
++
++Try launching it with a different TERM: $ TERM=xterm myapp. toe(1) will give
++you a list of available terminals, but you’ll most likely switch between xterm,
++st or st-256color. The default value for TERM can be changed in config.h
++(TNAME).
++
+ ## How do I scroll back up?
+ 
+ * Using a terminal multiplexer.
+@@ -111,7 +118,7 @@ St is emulating the Linux way of handling backspace being delete and delete bein
+ backspace.
+ 
+ This is an issue that was discussed in suckless mailing list
+-<https://lists.suckless.org/dev/1404/20697.html>. Here is why some old grumpy
++<http://lists.suckless.org/dev/1404/20697.html>. Here is why some old grumpy
+ terminal users wants its backspace to be how he feels it:
+ 
+ 	Well, I am going to comment why I want to change the behaviour
+@@ -173,19 +180,6 @@ Apply [1].
+ 
+ [1] https://st.suckless.org/patches/delkey
+ 
+-
+-## Why do images not work in st using the w3m image hack?
+-
+-w3mimg uses a hack that draws an image on top of the terminal emulator Drawable
+-window. The hack relies on the terminal to use a single buffer to draw its
+-contents directly.
+-
+-st uses double-buffered drawing so the image is quickly replaced and may show a
+-short flicker effect.
+-
+-Below is a patch example to change st double-buffering to a single Drawable
+-buffer.
+-
+ diff --git a/x.c b/x.c
+ --- a/x.c
+ +++ b/x.c
+diff --git a/st.c b/st.c
+index ef8abd5..c544e07 100644
+--- a/st.c
++++ b/st.c
+@@ -35,6 +35,7 @@
+ #define ESC_ARG_SIZ   16
+ #define STR_BUF_SIZ   ESC_BUF_SIZ
+ #define STR_ARG_SIZ   ESC_ARG_SIZ
++#define HISTSIZE      2000
+ 
+ /* macros */
+ #define IS_SET(flag)		((term.mode & (flag)) != 0)
+@@ -42,6 +43,9 @@
+ #define ISCONTROLC1(c)		(BETWEEN(c, 0x80, 0x9f))
+ #define ISCONTROL(c)		(ISCONTROLC0(c) || ISCONTROLC1(c))
+ #define ISDELIM(u)		(u && wcschr(worddelimiters, u))
++#define TLINE(y)		((y) < term.scr ? term.hist[((y) + term.histi - \
++				term.scr + HISTSIZE + 1) % HISTSIZE] : \
++				term.line[(y) - term.scr])
+ 
+ enum term_mode {
+ 	MODE_WRAP        = 1 << 0,
+@@ -117,6 +121,9 @@ typedef struct {
+ 	int col;      /* nb col */
+ 	Line *line;   /* screen */
+ 	Line *alt;    /* alternate screen */
++	Line hist[HISTSIZE]; /* history buffer */
++	int histi;    /* history index */
++	int scr;      /* scroll back */
+ 	int *dirty;   /* dirtyness of lines */
+ 	TCursor c;    /* cursor */
+ 	int ocx;      /* old cursor col */
+@@ -136,7 +143,7 @@ typedef struct {
+ /* ESC '[' [[ [<priv>] <arg> [;]] <mode> [<mode>]] */
+ typedef struct {
+ 	char buf[ESC_BUF_SIZ]; /* raw string */
+-	size_t len;            /* raw string length */
++	int len;               /* raw string length */
+ 	char priv;
+ 	int arg[ESC_ARG_SIZ];
+ 	int narg;              /* nb of args */
+@@ -147,9 +154,8 @@ typedef struct {
+ /* ESC type [[ [<priv>] <arg> [;]] <mode>] ESC '\' */
+ typedef struct {
+ 	char type;             /* ESC type ... */
+-	char *buf;             /* allocated raw string */
+-	size_t siz;            /* allocation size */
+-	size_t len;            /* raw string length */
++	char buf[STR_BUF_SIZ]; /* raw string */
++	int len;               /* raw string length */
+ 	char *args[STR_ARG_SIZ];
+ 	int narg;              /* nb of args */
+ } STREscape;
+@@ -186,8 +192,8 @@ static void tnewline(int);
+ static void tputtab(int);
+ static void tputc(Rune);
+ static void treset(void);
+-static void tscrollup(int, int);
+-static void tscrolldown(int, int);
++static void tscrollup(int, int, int);
++static void tscrolldown(int, int, int);
+ static void tsetattr(int *, int);
+ static void tsetchar(Rune, Glyph *, int, int);
+ static void tsetdirt(int, int);
+@@ -369,7 +375,7 @@ base64dec_getc(const char **src)
+ {
+ 	while (**src && !isprint(**src))
+ 		(*src)++;
+-	return **src ? *((*src)++) : '=';  /* emulate padding if string ends */
++	return *((*src)++);
+ }
+ 
+ char *
+@@ -387,10 +393,6 @@ base64dec(const char *src)
+ 		int c = base64_digits[(unsigned char) base64dec_getc(&src)];
+ 		int d = base64_digits[(unsigned char) base64dec_getc(&src)];
+ 
+-		/* invalid input. 'a' can be -1, e.g. if src is "\n" (c-str) */
+-		if (a == -1 || b == -1)
+-			break;
+-
+ 		*dst++ = (a << 2) | ((b & 0x30) >> 4);
+ 		if (c == -1)
+ 			break;
+@@ -416,10 +418,10 @@ tlinelen(int y)
+ {
+ 	int i = term.col;
+ 
+-	if (term.line[y][i - 1].mode & ATTR_WRAP)
++	if (TLINE(y)[i - 1].mode & ATTR_WRAP)
+ 		return i;
+ 
+-	while (i > 0 && term.line[y][i - 1].u == ' ')
++	while (i > 0 && TLINE(y)[i - 1].u == ' ')
+ 		--i;
+ 
+ 	return i;
+@@ -528,7 +530,7 @@ selsnap(int *x, int *y, int direction)
+ 		 * Snap around if the word wraps around at the end or
+ 		 * beginning of a line.
+ 		 */
+-		prevgp = &term.line[*y][*x];
++		prevgp = &TLINE(*y)[*x];
+ 		prevdelim = ISDELIM(prevgp->u);
+ 		for (;;) {
+ 			newx = *x + direction;
+@@ -543,14 +545,14 @@ selsnap(int *x, int *y, int direction)
+ 					yt = *y, xt = *x;
+ 				else
+ 					yt = newy, xt = newx;
+-				if (!(term.line[yt][xt].mode & ATTR_WRAP))
++				if (!(TLINE(yt)[xt].mode & ATTR_WRAP))
+ 					break;
+ 			}
+ 
+ 			if (newx >= tlinelen(newy))
+ 				break;
+ 
+-			gp = &term.line[newy][newx];
++			gp = &TLINE(newy)[newx];
+ 			delim = ISDELIM(gp->u);
+ 			if (!(gp->mode & ATTR_WDUMMY) && (delim != prevdelim
+ 					|| (delim && gp->u != prevgp->u)))
+@@ -571,14 +573,14 @@ selsnap(int *x, int *y, int direction)
+ 		*x = (direction < 0) ? 0 : term.col - 1;
+ 		if (direction < 0) {
+ 			for (; *y > 0; *y += direction) {
+-				if (!(term.line[*y-1][term.col-1].mode
++				if (!(TLINE(*y-1)[term.col-1].mode
+ 						& ATTR_WRAP)) {
+ 					break;
+ 				}
+ 			}
+ 		} else if (direction > 0) {
+ 			for (; *y < term.row-1; *y += direction) {
+-				if (!(term.line[*y][term.col-1].mode
++				if (!(TLINE(*y)[term.col-1].mode
+ 						& ATTR_WRAP)) {
+ 					break;
+ 				}
+@@ -609,13 +611,13 @@ getsel(void)
+ 		}
+ 
+ 		if (sel.type == SEL_RECTANGULAR) {
+-			gp = &term.line[y][sel.nb.x];
++			gp = &TLINE(y)[sel.nb.x];
+ 			lastx = sel.ne.x;
+ 		} else {
+-			gp = &term.line[y][sel.nb.y == y ? sel.nb.x : 0];
++			gp = &TLINE(y)[sel.nb.y == y ? sel.nb.x : 0];
+ 			lastx = (sel.ne.y == y) ? sel.ne.x : term.col-1;
+ 		}
+-		last = &term.line[y][MIN(lastx, linelen-1)];
++		last = &TLINE(y)[MIN(lastx, linelen-1)];
+ 		while (last >= gp && last->u == ' ')
+ 			--last;
+ 
+@@ -850,6 +852,9 @@ void
+ ttywrite(const char *s, size_t n, int may_echo)
+ {
+ 	const char *next;
++	Arg arg = (Arg) { .i = term.scr };
++
++	kscrolldown(&arg);
+ 
+ 	if (may_echo && IS_SET(MODE_ECHO))
+ 		twrite(s, n, 1);
+@@ -1049,6 +1054,11 @@ tnew(int col, int row)
+ 	treset();
+ }
+ 
++int tisaltscr(void)
++{
++	return IS_SET(MODE_ALTSCREEN);
++}
++
+ void
+ tswapscreen(void)
+ {
+@@ -1061,13 +1071,53 @@ tswapscreen(void)
+ }
+ 
+ void
+-tscrolldown(int orig, int n)
++kscrolldown(const Arg* a)
++{
++	int n = a->i;
++
++	if (n < 0)
++		n = term.row + n;
++
++	if (n > term.scr)
++		n = term.scr;
++
++	if (term.scr > 0) {
++		term.scr -= n;
++		selscroll(0, -n);
++		tfulldirt();
++	}
++}
++
++void
++kscrollup(const Arg* a)
++{
++	int n = a->i;
++
++	if (n < 0)
++		n = term.row + n;
++
++	if (term.scr <= HISTSIZE-n) {
++		term.scr += n;
++		selscroll(0, n);
++		tfulldirt();
++	}
++}
++
++void
++tscrolldown(int orig, int n, int copyhist)
+ {
+ 	int i;
+ 	Line temp;
+ 
+ 	LIMIT(n, 0, term.bot-orig+1);
+ 
++	if (copyhist) {
++		term.histi = (term.histi - 1 + HISTSIZE) % HISTSIZE;
++		temp = term.hist[term.histi];
++		term.hist[term.histi] = term.line[term.bot];
++		term.line[term.bot] = temp;
++	}
++
+ 	tsetdirt(orig, term.bot-n);
+ 	tclearregion(0, term.bot-n+1, term.col-1, term.bot);
+ 
+@@ -1081,13 +1131,23 @@ tscrolldown(int orig, int n)
+ }
+ 
+ void
+-tscrollup(int orig, int n)
++tscrollup(int orig, int n, int copyhist)
+ {
+ 	int i;
+ 	Line temp;
+ 
+ 	LIMIT(n, 0, term.bot-orig+1);
+ 
++	if (copyhist) {
++		term.histi = (term.histi + 1) % HISTSIZE;
++		temp = term.hist[term.histi];
++		term.hist[term.histi] = term.line[orig];
++		term.line[orig] = temp;
++	}
++
++	if (term.scr > 0 && term.scr < HISTSIZE)
++		term.scr = MIN(term.scr + n, HISTSIZE-1);
++
+ 	tclearregion(0, orig, term.col-1, orig+n-1);
+ 	tsetdirt(orig+n, term.bot);
+ 
+@@ -1126,7 +1186,7 @@ tnewline(int first_col)
+ 	int y = term.c.y;
+ 
+ 	if (y == term.bot) {
+-		tscrollup(term.top, 1);
++		tscrollup(term.top, 1, 1);
+ 	} else {
+ 		y++;
+ 	}
+@@ -1291,14 +1351,14 @@ void
+ tinsertblankline(int n)
+ {
+ 	if (BETWEEN(term.c.y, term.top, term.bot))
+-		tscrolldown(term.c.y, n);
++		tscrolldown(term.c.y, n, 0);
+ }
+ 
+ void
+ tdeleteline(int n)
+ {
+ 	if (BETWEEN(term.c.y, term.top, term.bot))
+-		tscrollup(term.c.y, n);
++		tscrollup(term.c.y, n, 0);
+ }
+ 
+ int32_t
+@@ -1735,11 +1795,11 @@ csihandle(void)
+ 		break;
+ 	case 'S': /* SU -- Scroll <n> line up */
+ 		DEFAULT(csiescseq.arg[0], 1);
+-		tscrollup(term.top, csiescseq.arg[0]);
++		tscrollup(term.top, csiescseq.arg[0], 0);
+ 		break;
+ 	case 'T': /* SD -- Scroll <n> line down */
+ 		DEFAULT(csiescseq.arg[0], 1);
+-		tscrolldown(term.top, csiescseq.arg[0]);
++		tscrolldown(term.top, csiescseq.arg[0], 0);
+ 		break;
+ 	case 'L': /* IL -- Insert <n> blank lines */
+ 		DEFAULT(csiescseq.arg[0], 1);
+@@ -1814,7 +1874,7 @@ csihandle(void)
+ void
+ csidump(void)
+ {
+-	size_t i;
++	int i;
+ 	uint c;
+ 
+ 	fprintf(stderr, "ESC[");
+@@ -1932,7 +1992,7 @@ strparse(void)
+ void
+ strdump(void)
+ {
+-	size_t i;
++	int i;
+ 	uint c;
+ 
+ 	fprintf(stderr, "ESC%c", strescseq.type);
+@@ -1959,10 +2019,7 @@ strdump(void)
+ void
+ strreset(void)
+ {
+-	strescseq = (STREscape){
+-		.buf = xrealloc(strescseq.buf, STR_BUF_SIZ),
+-		.siz = STR_BUF_SIZ,
+-	};
++	memset(&strescseq, 0, sizeof(strescseq));
+ }
+ 
+ void
+@@ -2246,7 +2303,7 @@ eschandle(uchar ascii)
+ 		return 0;
+ 	case 'D': /* IND -- Linefeed */
+ 		if (term.c.y == term.bot) {
+-			tscrollup(term.top, 1);
++			tscrollup(term.top, 1, 1);
+ 		} else {
+ 			tmoveto(term.c.x, term.c.y+1);
+ 		}
+@@ -2259,7 +2316,7 @@ eschandle(uchar ascii)
+ 		break;
+ 	case 'M': /* RI -- Reverse index */
+ 		if (term.c.y == term.top) {
+-			tscrolldown(term.top, 1);
++			tscrolldown(term.top, 1, 1);
+ 		} else {
+ 			tmoveto(term.c.x, term.c.y-1);
+ 		}
+@@ -2343,7 +2400,7 @@ tputc(Rune u)
+ 		if (term.esc&ESC_DCS && strescseq.len == 0 && u == 'q')
+ 			term.mode |= MODE_SIXEL;
+ 
+-		if (strescseq.len+len >= strescseq.siz) {
++		if (strescseq.len+len >= sizeof(strescseq.buf)-1) {
+ 			/*
+ 			 * Here is a bug in terminals. If the user never sends
+ 			 * some code to stop the str or esc command, then st
+@@ -2357,10 +2414,7 @@ tputc(Rune u)
+ 			 * term.esc = 0;
+ 			 * strhandle();
+ 			 */
+-			if (strescseq.siz > (SIZE_MAX - UTF_SIZ) / 2)
+-				return;
+-			strescseq.siz *= 2;
+-			strescseq.buf = xrealloc(strescseq.buf, strescseq.siz);
++			return;
+ 		}
+ 
+ 		memmove(&strescseq.buf[strescseq.len], c, len);
+@@ -2481,7 +2535,7 @@ twrite(const char *buf, int buflen, int show_ctrl)
+ void
+ tresize(int col, int row)
+ {
+-	int i;
++	int i, j;
+ 	int minrow = MIN(row, term.row);
+ 	int mincol = MIN(col, term.col);
+ 	int *bp;
+@@ -2518,6 +2572,14 @@ tresize(int col, int row)
+ 	term.dirty = xrealloc(term.dirty, row * sizeof(*term.dirty));
+ 	term.tabs = xrealloc(term.tabs, col * sizeof(*term.tabs));
+ 
++	for (i = 0; i < HISTSIZE; i++) {
++		term.hist[i] = xrealloc(term.hist[i], col * sizeof(Glyph));
++		for (j = mincol; j < col; j++) {
++			term.hist[i][j] = term.c.attr;
++			term.hist[i][j].u = ' ';
++		}
++	}
++
+ 	/* resize each row to new width, zero-pad if needed */
+ 	for (i = 0; i < minrow; i++) {
+ 		term.line[i] = xrealloc(term.line[i], col * sizeof(Glyph));
+@@ -2576,7 +2638,7 @@ drawregion(int x1, int y1, int x2, int y2)
+ 			continue;
+ 
+ 		term.dirty[y] = 0;
+-		xdrawline(term.line[y], x1, y, x2);
++		xdrawline(TLINE(y), x1, y, x2);
+ 	}
+ }
+ 
+@@ -2597,8 +2659,9 @@ draw(void)
+ 		cx--;
+ 
+ 	drawregion(0, 0, term.col, term.row);
+-	xdrawcursor(cx, term.c.y, term.line[term.c.y][cx],
+-			term.ocx, term.ocy, term.line[term.ocy][term.ocx]);
++	if (term.scr == 0)
++		xdrawcursor(cx, term.c.y, term.line[term.c.y][cx],
++				term.ocx, term.ocy, term.line[term.ocy][term.ocx]);
+ 	term.ocx = cx;
+ 	term.ocy = term.c.y;
+ 	xfinishdraw();
+diff --git a/st.h b/st.h
+index 3d351b6..22f7f79 100644
+--- a/st.h
++++ b/st.h
+@@ -77,16 +77,26 @@ typedef union {
+ 	const char *s;
+ } Arg;
+ 
++typedef struct {
++	 uint b;
++	 uint mask;
++	 void (*func)(const Arg *);
++	 const Arg arg;
++} MouseKey;
++
+ void die(const char *, ...);
+ void redraw(void);
+ void draw(void);
+ 
+ void printscreen(const Arg *);
++void kscrolldown(const Arg *);
++void kscrollup(const Arg *);
+ void printsel(const Arg *);
+ void sendbreak(const Arg *);
+ void toggleprinter(const Arg *);
+ 
+ int tattrset(int);
++int tisaltscr(void);
+ void tnew(int, int);
+ void tresize(int, int);
+ void tsetdirtattr(int);
+@@ -123,3 +133,4 @@ extern char *termname;
+ extern unsigned int tabspaces;
+ extern unsigned int defaultfg;
+ extern unsigned int defaultbg;
++extern MouseKey mkeys[];
+diff --git a/st.info b/st.info
+index 8201ad6..387191f 100644
+--- a/st.info
++++ b/st.info
+@@ -187,10 +187,10 @@ st-mono| simpleterm monocolor,
+ # disabled rep for now: causes some issues with older ncurses versions.
+ #	rep=%p1%c\E[%p2%{1}%-%db,
+ # tmux extensions, see TERMINFO EXTENSIONS in tmux(1)
++	Se,
++	Ss,
+ 	Tc,
+ 	Ms=\E]52;%p1%s;%p2%s\007,
+-	Se=\E[2 q,
+-	Ss=\E[%p1%d q,
+ 
+ st| simpleterm,
+ 	use=st-mono,
+diff --git a/x.c b/x.c
+index 210f184..ce8d07a 100644
+--- a/x.c
++++ b/x.c
+@@ -94,12 +94,8 @@ typedef struct {
+ 	Drawable buf;
+ 	GlyphFontSpec *specbuf; /* font spec buffer used for rendering */
+ 	Atom xembed, wmdeletewin, netwmname, netwmpid;
+-	struct {
+-		XIM xim;
+-		XIC xic;
+-		XPoint spot;
+-		XVaNestedList spotlist;
+-	} ime;
++	XIM xim;
++	XIC xic;
+ 	Draw draw;
+ 	Visual *vis;
+ 	XSetWindowAttributes attrs;
+@@ -146,10 +142,9 @@ static void xdrawglyphfontspecs(const XftGlyphFontSpec *, Glyph, int, int, int);
+ static void xdrawglyph(Glyph, int, int);
+ static void xclear(int, int, int, int);
+ static int xgeommasktogravity(int);
+-static int ximopen(Display *);
++static void ximopen(Display *);
+ static void ximinstantiate(Display *, XPointer, XPointer);
+ static void ximdestroy(XIM, XPointer, XPointer);
+-static int xicdestroy(XIC, XPointer, XPointer);
+ static void xinit(int, int);
+ static void cresize(int, int);
+ static void xresize(int, int);
+@@ -460,6 +455,7 @@ void
+ bpress(XEvent *e)
+ {
+ 	struct timespec now;
++	MouseKey *mk;
+ 	int snap;
+ 
+ 	if (IS_SET(MODE_MOUSE) && !(e->xbutton.state & forcemousemod)) {
+@@ -467,8 +463,18 @@ bpress(XEvent *e)
+ 		return;
+ 	}
+ 
+-	if (mouseaction(e, 0))
+-		return;
++	if (tisaltscr()) {
++		if (mouseaction(e, 0))
++			return;
++	}
++
++	for (mk = mkeys; mk < mkeys + LEN(mkeys); mk++) {
++		if (e->xbutton.button == mk->b
++				&& match(mk->mask, e->xbutton.state)) {
++			mk->func(&mk->arg);
++			return;
++		}
++	}
+ 
+ 	if (e->xbutton.button == Button1) {
+ 		/*
+@@ -1041,58 +1047,41 @@ xunloadfonts(void)
+ 	xunloadfont(&dc.ibfont);
+ }
+ 
+-int
++void
+ ximopen(Display *dpy)
+ {
+-	XIMCallback imdestroy = { .client_data = NULL, .callback = ximdestroy };
+-	XICCallback icdestroy = { .client_data = NULL, .callback = xicdestroy };
+-
+-	xw.ime.xim = XOpenIM(xw.dpy, NULL, NULL, NULL);
+-	if (xw.ime.xim == NULL)
+-		return 0;
+-
+-	if (XSetIMValues(xw.ime.xim, XNDestroyCallback, &imdestroy, NULL))
+-		fprintf(stderr, "XSetIMValues: "
+-		                "Could not set XNDestroyCallback.\n");
++	XIMCallback destroy = { .client_data = NULL, .callback = ximdestroy };
+ 
+-	xw.ime.spotlist = XVaCreateNestedList(0, XNSpotLocation, &xw.ime.spot,
+-	                                      NULL);
+-
+-	if (xw.ime.xic == NULL) {
+-		xw.ime.xic = XCreateIC(xw.ime.xim, XNInputStyle,
+-		                       XIMPreeditNothing | XIMStatusNothing,
+-		                       XNClientWindow, xw.win,
+-		                       XNDestroyCallback, &icdestroy,
+-		                       NULL);
++	if ((xw.xim = XOpenIM(xw.dpy, NULL, NULL, NULL)) == NULL) {
++		XSetLocaleModifiers("@im=local");
++		if ((xw.xim = XOpenIM(xw.dpy, NULL, NULL, NULL)) == NULL) {
++			XSetLocaleModifiers("@im=");
++			if ((xw.xim = XOpenIM(xw.dpy, NULL, NULL, NULL)) == NULL)
++				die("XOpenIM failed. Could not open input device.\n");
++		}
+ 	}
+-	if (xw.ime.xic == NULL)
+-		fprintf(stderr, "XCreateIC: Could not create input context.\n");
+-
+-	return 1;
++	if (XSetIMValues(xw.xim, XNDestroyCallback, &destroy, NULL) != NULL)
++		die("XSetIMValues failed. Could not set input method value.\n");
++	xw.xic = XCreateIC(xw.xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
++				XNClientWindow, xw.win, XNFocusWindow, xw.win, NULL);
++	if (xw.xic == NULL)
++		die("XCreateIC failed. Could not obtain input method.\n");
+ }
+ 
+ void
+ ximinstantiate(Display *dpy, XPointer client, XPointer call)
+ {
+-	if (ximopen(dpy))
+-		XUnregisterIMInstantiateCallback(xw.dpy, NULL, NULL, NULL,
+-		                                 ximinstantiate, NULL);
++	ximopen(dpy);
++	XUnregisterIMInstantiateCallback(xw.dpy, NULL, NULL, NULL,
++					ximinstantiate, NULL);
+ }
+ 
+ void
+ ximdestroy(XIM xim, XPointer client, XPointer call)
+ {
+-	xw.ime.xim = NULL;
++	xw.xim = NULL;
+ 	XRegisterIMInstantiateCallback(xw.dpy, NULL, NULL, NULL,
+-	                               ximinstantiate, NULL);
+-	XFree(xw.ime.spotlist);
+-}
+-
+-int
+-xicdestroy(XIC xim, XPointer client, XPointer call)
+-{
+-	xw.ime.xic = NULL;
+-	return 1;
++					ximinstantiate, NULL);
+ }
+ 
+ void
+@@ -1160,10 +1149,7 @@ xinit(int cols, int rows)
+ 	xw.draw = XftDrawCreate(xw.dpy, xw.buf, xw.vis, xw.cmap);
+ 
+ 	/* input methods */
+-	if (!ximopen(xw.dpy)) {
+-		XRegisterIMInstantiateCallback(xw.dpy, NULL, NULL, NULL,
+-	                                       ximinstantiate, NULL);
+-	}
++	ximopen(xw.dpy);
+ 
+ 	/* white cursor, black outline */
+ 	cursor = XCreateFontCursor(xw.dpy, mouseshape);
+@@ -1642,13 +1628,11 @@ xfinishdraw(void)
+ void
+ xximspot(int x, int y)
+ {
+-	if (xw.ime.xic == NULL)
+-		return;
++	XPoint spot = { borderpx + x * win.cw, borderpx + (y + 1) * win.ch };
++	XVaNestedList attr = XVaCreateNestedList(0, XNSpotLocation, &spot, NULL);
+ 
+-	xw.ime.spot.x = borderpx + x * win.cw;
+-	xw.ime.spot.y = borderpx + (y + 1) * win.ch;
+-
+-	XSetICValues(xw.ime.xic, XNPreeditAttributes, xw.ime.spotlist, NULL);
++	XSetICValues(xw.xic, XNPreeditAttributes, attr, NULL);
++	XFree(attr);
+ }
+ 
+ void
+@@ -1724,15 +1708,13 @@ focus(XEvent *ev)
+ 		return;
+ 
+ 	if (ev->type == FocusIn) {
+-		if (xw.ime.xic)
+-			XSetICFocus(xw.ime.xic);
++		XSetICFocus(xw.xic);
+ 		win.mode |= MODE_FOCUSED;
+ 		xseturgency(0);
+ 		if (IS_SET(MODE_FOCUS))
+ 			ttywrite("\033[I", 3, 0);
+ 	} else {
+-		if (xw.ime.xic)
+-			XUnsetICFocus(xw.ime.xic);
++		XUnsetICFocus(xw.xic);
+ 		win.mode &= ~MODE_FOCUSED;
+ 		if (IS_SET(MODE_FOCUS))
+ 			ttywrite("\033[O", 3, 0);
+@@ -1787,7 +1769,7 @@ kpress(XEvent *ev)
+ {
+ 	XKeyEvent *e = &ev->xkey;
+ 	KeySym ksym;
+-	char buf[64], *customkey;
++	char buf[32], *customkey;
+ 	int len;
+ 	Rune c;
+ 	Status status;
+@@ -1796,10 +1778,7 @@ kpress(XEvent *ev)
+ 	if (IS_SET(MODE_KBDLOCK))
+ 		return;
+ 
+-	if (xw.ime.xic)
+-		len = XmbLookupString(xw.ime.xic, e, buf, sizeof buf, &ksym, &status);
+-	else
+-		len = XLookupString(e, buf, sizeof buf, &ksym, NULL);
++	len = XmbLookupString(xw.xic, e, buf, sizeof buf, &ksym, &status);
+ 	/* 1. shortcuts */
+ 	for (bp = shortcuts; bp < shortcuts + LEN(shortcuts); bp++) {
+ 		if (ksym == bp->keysym && match(bp->mod, e->state)) {

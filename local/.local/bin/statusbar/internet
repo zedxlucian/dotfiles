@@ -1,0 +1,6 @@
+#!/bin/sh
+
+grep -q "down" /sys/class/net/w*/operstate && wifiicon=" 睊 " ||
+	wifiicon="$(grep "^\s*w" /proc/net/wireless | awk '{ print "直", int($3 * 100 / 70) "%" }')"
+
+printf "%s\n" "$wifiicon"
