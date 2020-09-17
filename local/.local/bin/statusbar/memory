@@ -4,4 +4,4 @@ furp() {
     free | { read z; read a b c d; echo $((100*$c/$b)) ; }
 }
 
-furp | sed 's/^/\[  MEM /;s/$/% /'
+furp | sed 's/^/\  MEM /;s/$/% /'

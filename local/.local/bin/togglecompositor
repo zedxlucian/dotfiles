@@ -1,9 +1,10 @@
 #!/bin/sh
 
-# If picom is running, will kill, else will start.
+# This script will toggle on and off the picom compositor.
+
 if pidof "picom";
-then
-	killall picom && notify-send "Transparency off."
+then 
+	killall "picom"
 else
-	picom -b && notify-send "Transparency on."
+	picom -b &
 fi

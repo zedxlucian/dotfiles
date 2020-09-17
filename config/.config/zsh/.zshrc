@@ -42,6 +42,8 @@ fi
 
 #AUTO-COMPLETION!!
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+# Bind CTRL+SPACE to accept auto-suggestions.
+bindkey '^ ' autosuggest-accept
 
 #Load zsh-syntax-highlighting; should be last.
 source /usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh 2>/dev/null
@@ -49,3 +51,7 @@ source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
+
+# FZF Keybinding.
+source /usr/share/fzf/key-bindings.zsh
+bindkey '^R' fzf-history-widget
