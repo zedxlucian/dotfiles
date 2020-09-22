@@ -1,0 +1,18 @@
+[submodule "submodules/vim-startify"]
+	path = submodules/vim-startify
+	url = https://github.com/mhinz/vim-startify
+[submodule "submodules/gruvbox"]
+	path = submodules/gruvbox
+	url = https://github.com/morhetz/gruvbox
+[submodule "submodules/vim"]
+	path = submodules/vim
+	url = https://github.com/dracula/vim
+[submodule "vim/.vim/pack/themes/start/dracula"]
+	path = vim/.vim/pack/themes/start/dracula
+	url = https://github.com/dracula/vim.git
+[submodule "submodules/dracula"]
+	path = submodules/dracula
+	url = https://github.com/dracula/vim.git
+[submodule "submodules/Colorizer"]
+	path = submodules/Colorizer
+	url = https://github.com/chrisbra/Colorizer
