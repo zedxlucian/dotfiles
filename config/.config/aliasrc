@@ -19,7 +19,7 @@ alias \
 
 # These common commands are just too long! Abbreviate them.
 alias \
-	v='vim -c "let g:tty='\''$(tty)'\''"' \
+	v='nvim -c "let g:tty='\''$(tty)'\''"' \
 	ka="killall" \
 	lg="lazygit" \
 	g="git" \

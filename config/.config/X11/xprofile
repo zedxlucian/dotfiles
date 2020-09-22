@@ -28,14 +28,11 @@ xss-lock  -- betterlockscreen -l blur &
 # Compositor
 picom -b &
 
-# Anti blue light program.
-redshift &
-
 # Notification system
 dunst &
 
 # Load XResources file
-xxrdb -merge $XDG_CONFIG_HOME/X11/Xresources &
+xrdb -load "${$XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" &
 
 # ??
 xsetroot -cursor_name left_ptr &
