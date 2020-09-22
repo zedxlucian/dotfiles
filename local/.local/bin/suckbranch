@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-dotfiles="/home/lydien/.dotfiles/local/.local/src/suckless"
-project=$(basename "$(pwd)")
-diffdir="${dotfiles}/${project}_diffs"
-git checkout master &&
-make clean && rm -f config.h && git reset --hard origin/master &&
-for file in "$diffdir"/*.diff; do
-	git branch "$(basename "$file" | sed 's/\(.*\)\..*/\1/')"
-done
