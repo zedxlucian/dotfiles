@@ -1,12 +1,12 @@
-/* Icons & Text on DWM Status Bar */
-dwm.normfgcolor:    #CAA9FA
-/* Background of icons & text on DWM status bar */ 
+! Icons & Text on DWM Status Bar 
+dwm.normfgcolor:    #BFBFBF
+! Background of icons & text on DWM status bar 
 dwm.normbgcolor:    #282A36 
-/* Selected background */ 
-dwm.selbgcolor:     #CAA9FA 
-/* Border */ 
-dwm.selbordercolor: #BD93F9 
-/* Title bar */
+! Selected background 
+dwm.selbgcolor:     #BFBFBF
+! Border 
+dwm.selbordercolor: #F8F8F2 
+! Title bar 
 dwm.selfgcolor:     #282A36 
 
 st.foreground: #F8F8F2

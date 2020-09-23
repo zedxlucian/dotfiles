@@ -1,6 +1,6 @@
 #!/bin/sh
 
-chosen="$( printf "shutdown\nreboot\nlock\n" | dmenu -i -c -l 4 -nb "#cc241d" -sb "#fb4934" -nf "#282828" )"
+chosen="$( printf "shutdown\nreboot\nlock\n" | dmenu -i -c -l 4 -bw 2 -nb "#ffb86c" -sb "#f1fa8c" -nf "#282a36" )"
 case "$chosen" in
     "shutdown")
         sudo shutdown -h now

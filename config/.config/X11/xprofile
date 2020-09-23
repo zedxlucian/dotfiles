@@ -8,6 +8,9 @@
 # Status Bar
 dwmblocks &
 
+# Load XResources file
+xrdb -load "${$XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" &
+
 # Keyboard Layout
 # 1. Set default keyboard leyout
 # 2. Set both caps lock keys to toggle caps behavior
@@ -30,9 +33,6 @@ picom -b &
 
 # Notification system
 dunst &
-
-# Load XResources file
-xrdb -load "${$XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" &
 
 # ??
 xsetroot -cursor_name left_ptr &
