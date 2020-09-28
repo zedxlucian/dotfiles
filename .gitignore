@@ -1,0 +1,6 @@
+/config/.config/emacs/auto-save-list/
+/config/.config/emacs/forge-database.sqlite
+/config/.config/emacs/transient/
+/vim/.vim/.netrwhist
+/config/.config/emacs/elpa/
+/config/.config/emacs/projectile-bookmarks.eld
