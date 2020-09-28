@@ -4,8 +4,9 @@
 export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | paste -sd ':')"
 
 # Default programs
-export EDITOR="vim"
-export VISUAL="vim"
+export ALTERNATE_EDITOR=""
+export EDITOR="emacsclient -t"
+export VISUAL="emacsclient -c -a emacs"
 export TERMINAL="st"
 export BROWSER="brave"
 
