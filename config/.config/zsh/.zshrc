@@ -53,5 +53,11 @@ source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
 
 # FZF Keybinding.
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+--color=dark
+--color=fg:-1,bg:-1,hl:#5fff87,fg+:-1,bg+:-1,hl+:#ffaf5f
+--color=info:#af87ff,prompt:#5fff87,pointer:#ff87d7,marker:#ff87d7,spinner:#ff87d7
+'
+export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200' --select-1 --exit-0"
 source /usr/share/fzf/key-bindings.zsh
 bindkey '^R' fzf-history-widget

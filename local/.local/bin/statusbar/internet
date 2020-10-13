@@ -5,4 +5,7 @@
 
 # printf "%s\n" "$wifiicon"
 
-printf " %s \n"  "$(sed "s/down//;s/up//" /sys/class/net/e*/operstate 2>/dev/null)"
+cmd="$(cat /sys/class/net/e*/operstate 2>/dev/null)"
+iconUp=
+iconDown=
+[ "$cmd" = "up" ] && echo "$iconUp$cmd" | sed 's/up//' || echo "$iconDown$cmd" | sed 's/down//'

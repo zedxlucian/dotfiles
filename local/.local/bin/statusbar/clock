@@ -1,7 +1,7 @@
 #!/bin/sh
 
-clock=$(date '+%a %d %b  %H:%M' | sed 's/[a-z]/\U&/;s/\.//2;s/ [a-z]/\U&/')
-
-# icon=""
-
-printf ' %s\n' "$clock"
+cmdDate=$(date '+%A %d %B')
+cmdTime=$(date '+%H:%M')
+iconDate=
+iconTime=
+echo "$iconDate $cmdDate $iconTime $cmdTime" 
