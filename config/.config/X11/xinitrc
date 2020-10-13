@@ -40,7 +40,7 @@ unclutter -idle 3 &
 nitrogen --restore &
 
 # Xresources is needed to theme DWM & ST.
-xrdb -merge ${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources &
+xrdb -merge "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" &
 
 # Emacs Daemon
 emacs --daemon &
@@ -48,10 +48,12 @@ emacs --daemon &
 # Numerical pad on
 numlockx on &
 
+# Cloud provider synching software
+megasync &
+
 # Start DWM
 while true; do
 	dwm>/dev/null 2>&1
 done
 
 exec dwm
-

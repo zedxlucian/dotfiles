@@ -1,7 +1,6 @@
 #!/bin/sh
 
-furp() {
-    free | { read z; read a b c d; echo $((100*$c/$b)) ; }
-}
+cmd="$(free --mebi | sed -n '2{p;q}' | awk '{printf ("%2.2fG/%2.2fG\n", ( $3 / 1024), ($2 / 1024))}')"
+icon=
 
-furp | sed 's/^/\  MEM /;s/$/% /'
+echo "$icon $cmd"

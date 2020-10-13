@@ -1,13 +1,13 @@
 ! Icons & Text on DWM Status Bar 
-dwm.normfgcolor:    #BFBFBF
+!dwm.normfgcolor:    #BFBFBF
 ! Background of icons & text on DWM status bar 
-dwm.normbgcolor:    #282A36 
+!dwm.normbgcolor:    #282A36 
 ! Selected background 
-dwm.selbgcolor:     #BFBFBF
+!dwm.selbgcolor:     #BFBFBF
 ! Border 
-dwm.selbordercolor: #F8F8F2 
+!dwm.selbordercolor: #F8F8F2 
 ! Title bar 
-dwm.selfgcolor:     #282A36 
+!dwm.selfgcolor:     #282A36 
 
 st.foreground: #F8F8F2
 st.background: #282A36

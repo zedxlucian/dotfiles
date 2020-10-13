@@ -1,3 +1,6 @@
 #!/bin/sh
 
-sensors | awk '/Core 0/ {print " CPU", $3}' | sed 's/$/ /;s/+//'
+temp=$(sensors | awk '/Core 0/ {print $3}')
+icon=""
+
+echo "$icon $temp"

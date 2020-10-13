@@ -1,23 +1,20 @@
-#!/bin/sh
+#! /bin/sh
 
-# Prints the current volume or 🔇 if muted. Uses PulseAudio by default,
-# uncomment the ALSA lines if you remove PulseAudio.
+mute=$(pamixer --get-mute)
+vol=$(pamixer --get-volume)
+iconmute=婢
+ramp1=
+ramp2=
+ramp3=
 
-volstat="$(pactl list sinks)"
-# volstat="$(amixer get Master)" # ALSA only equivalent.
-
-echo "$volstat" | grep -q "oui" && printf " 婢 \\n" && exit
-# echo "$volstat" | grep "\[off\]" >/dev/null && printf "🔇\\n" && exit # ALSA
-
-vol="$(echo "$volstat" | grep '[0-9]\+%' | sed "s,.* \([0-9]\+\)%.*,\1,;1q")"
-# vol=$(echo "$volstat" | grep -o "\[[0-9]\+%\]" | sed "s/[^0-9]*//g;1q") # ALSA
-
-if [ "$vol" -gt "80" ]; then
-	icon=" "
-elif [ "$vol" -lt "80" ]; then
-    icon=" 墳"
-elif [ "$vol" -lt  "15" ]; then
-	icon=" "
+if [[ $mute == "true" ]]; then
+    echo " $iconmute mute"
+elif [[ "$vol" -ge "100" ]]; then
+    echo "$ramp3 $vol%"
+elif [[ "$vol" -le "33" ]]; then
+    echo "$ramp1 $vol%"
+elif [[ "$vol" -le "66" ]]; then
+    echo "$ramp2 $vol%"
+elif [[ "$vol" -ge "66" ]]; then
+    echo "$ramp3 $vol%"
 fi
-
-printf "%s %s%% \\n" "$icon" "$vol"

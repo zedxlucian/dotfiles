@@ -9,7 +9,7 @@ export ALTERNATE_EDITOR=""
 export EDITOR="emacsclient -t"
 export VISUAL="emacsclient -c -a emacs"
 export TERMINAL="st"
-export BROWSER="brave"
+export BROWSER="firefox"
 
 export TIME_STYLE="+%d-%m-%Y %H:%M:%S"
 
