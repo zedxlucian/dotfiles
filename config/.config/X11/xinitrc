@@ -24,9 +24,6 @@ xset r rate 300 50 &
 # Automatic Screen-Lock
 xss-lock  -- betterlockscreen -l blur &
 
-# Compositor
-picom -b &
-
 # Notification system
 dunst &
 
