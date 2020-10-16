@@ -16,3 +16,15 @@
 [submodule "submodules/Colorizer"]
 	path = submodules/Colorizer
 	url = https://github.com/chrisbra/Colorizer
+[submodule "submodules/indentLine"]
+	path = submodules/indentLine
+	url = https://github.com/Yggdroot/indentLine.git
+[submodule "submodules/vim-airline"]
+	path = submodules/vim-airline
+	url = https://github.com/vim-airline/vim-airline
+[submodule "submodules/vim-code-dark"]
+	path = submodules/vim-code-dark
+	url = https://github.com/tomasiser/vim-code-dark
+[submodule "submodules/fzf.vim"]
+	path = submodules/fzf.vim
+	url = https://github.com/junegunn/fzf.vim

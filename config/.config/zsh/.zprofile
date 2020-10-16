@@ -38,7 +38,12 @@ export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
 --color=info:#af87ff,prompt:#5fff87,pointer:#ff87d7,marker:#ff87d7,spinner:#ff87d7
 '
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200' --select-1 --exit-0"
-#
+
+# Fontpreview ENV
+export FONTPREVIEW_FONT_SIZE=14
+export FONTPREVIEW_BG_COLOR="#282A36"
+export FONTPREVIEW_FG_COLOR="#F8F8F2"
+
 # Export XDG environmental variables from '~/.config/user-dirs.dirs'
 eval "$(sed 's/^[^#].*/export &/g;t;d' ${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs)"
 

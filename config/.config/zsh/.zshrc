@@ -55,3 +55,5 @@ source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 # FZF Keybinding.
 source /usr/share/fzf/key-bindings.zsh
 bindkey '^R' fzf-history-widget
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
