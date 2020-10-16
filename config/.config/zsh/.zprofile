@@ -5,9 +5,8 @@ export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | paste -sd ':')"
 export PATH="$PATH:$HOME/.emacs.d/bin"
 
 # Default programs
-export ALTERNATE_EDITOR=""
-export EDITOR="emacsclient -t"
-export VISUAL="emacsclient -c -a emacs"
+export EDITOR="nvim"
+export VISUAL="nvim"
 export TERMINAL="st"
 export BROWSER="firefox"
 
@@ -33,6 +32,17 @@ export DISPLAY=":0.0"
 # FZF ENV
 export FZF_DEFAULT_COMMAND="fd -H . '/etc' $HOME '/usr'"
 export FZF_DEFAULT_OPTS="--layout=reverse --height 40%"
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+--color=dark
+--color=fg:-1,bg:-1,hl:#5fff87,fg+:-1,bg+:-1,hl+:#ffaf5f
+--color=info:#af87ff,prompt:#5fff87,pointer:#ff87d7,marker:#ff87d7,spinner:#ff87d7
+'
+export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200' --select-1 --exit-0"
+
+# Fontpreview ENV
+export FONTPREVIEW_FONT_SIZE=14
+export FONTPREVIEW_BG_COLOR="#282A36"
+export FONTPREVIEW_FG_COLOR="#F8F8F2"
 
 # Export XDG environmental variables from '~/.config/user-dirs.dirs'
 eval "$(sed 's/^[^#].*/export &/g;t;d' ${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs)"

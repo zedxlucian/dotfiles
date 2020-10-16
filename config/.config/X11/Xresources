@@ -1,32 +1,63 @@
+/* Dracula theming */
 ! Icons & Text on DWM Status Bar 
-!dwm.normfgcolor:    #BFBFBF
+dwm.normfgcolor:    #F8F8F2
 ! Background of icons & text on DWM status bar 
-!dwm.normbgcolor:    #282A36 
+dwm.normbgcolor:    #282A36 
 ! Selected background 
-!dwm.selbgcolor:     #BFBFBF
+dwm.selbgcolor:     #BD93F9
 ! Border 
-!dwm.selbordercolor: #F8F8F2 
+dwm.selbordercolor: #F8F8F2 
 ! Title bar 
-!dwm.selfgcolor:     #282A36 
+dwm.selfgcolor:     #F8F8F2 
 
 st.foreground: #F8F8F2
 st.background: #282A36
-st.color0:     #000000
-st.color8:     #4D4D4D
-st.color1:     #FF5555
-st.color9:     #FF6E67
-st.color2:     #50FA7B
-st.color10:    #5AF78E
-st.color3:     #F1FA8C
-st.color11:    #F4F99D
-st.color4:     #BD93F9
-st.color12:    #CAA9FA
-st.color5:     #FF79C6
-st.color13:    #FF92D0
-st.color6:     #8BE9FD
-st.color14:    #9AEDFE
-st.color7:     #BFBFBF
-st.color15:    #E6E6E6
+*.col0:     #000000
+*.col8:     #4D4D4D
+*.col1:     #FF5555
+*.col9:     #FF6E67
+*.col2:     #50FA7B
+*.col10:    #5AF78E
+*.col3:     #F1FA8C
+*.col11:    #F4F99D
+*.col4:     #BD93F9
+*.col12:    #CAA9FA
+*.col5:     #FF79C6
+*.col13:    #FF92D0
+*.col6:     #8BE9FD
+*.col14:    #9AEDFE
+*.col7:     #BFBFBF
+*.col15:    #E6E6E6
+
+/* Gruvbox theming */
+/* dwm.normfgcolor:    #F8F8F2 */
+/* ! Background of icons & text on DWM status bar */ 
+/* dwm.normbgcolor:    #282A36 */ 
+/* ! Selected background */ 
+/* dwm.selbgcolor:     #BD93F9 */
+/* ! Border */ 
+/* dwm.selbordercolor: #F8F8F2 */ 
+/* ! Title bar */ 
+/* dwm.selfgcolor:     #F8F8F2 */ 
+
+/* st.foreground: #F8F8F2 */
+/* st.background: #282A36 */
+/* *.col0:     #000000 */
+/* *.col8:     #4D4D4D */
+/* *.col1:     #FF5555 */
+/* *.col9:     #FF6E67 */
+/* *.col2:     #50FA7B */
+/* *.col10:    #5AF78E */
+/* *.col3:     #F1FA8C */
+/* *.col11:    #F4F99D */
+/* *.col4:     #BD93F9 */
+/* *.col12:    #CAA9FA */
+/* *.col5:     #FF79C6 */
+/* *.col13:    #FF92D0 */
+/* *.col6:     #8BE9FD */
+/* *.col14:    #9AEDFE */
+/* *.col7:     #BFBFBF */
+/* *.col15:    #E6E6E6 */
 
 Xft.autohint: 0
 Xft.antialias: 1
