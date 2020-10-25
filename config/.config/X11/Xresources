@@ -1,14 +1,14 @@
 /* Dracula theming */
-! Icons & Text on DWM Status Bar
-*.normfgcolor:    #F8F8F2
-! Background of icons & text on DWM status bar
-*.normbgcolor:    #282A36
-! Selected background
-*.selbgcolor:     #282A36
-! Border
-*.selbordercolor: #F8F8F2
-! Title bar
-*.selfgcolor:     #F8F8F2
+! Icons & Text on DWM Status Bar 
+dwm.normfgcolor:    #F8F8F2
+! Background of icons & text on DWM status bar 
+dwm.normbgcolor:    #282A36 
+! Selected background 
+dwm.selbgcolor:     #282A36
+! Border 
+dwm.selbordercolor: #F8F8F2 
+! Title bar 
+dwm.selfgcolor:     #F8F8F2 
 
 st.foreground: #F8F8F2
 st.background: #282A36
@@ -28,6 +28,15 @@ st.background: #282A36
 *.col14:    #9AEDFE
 *.col7:     #BFBFBF
 *.col15:    #E6E6E6
+
+dmenu.background : #282A36
+dmenu.foreground : #F8F8F2
+dmenu.selbackground : #BD93F9 
+dmenu.selforeground : #F8F8F2
+dmenu.selhbackground : #50FA7B
+dmenu.selhforeground : #282A36
+dmenu.normhbackground : #5AF78E
+dmenu.normhforeground : #282A36
 
 /* Gruvbox theming */
 /* dwm.normfgcolor:    #F8F8F2 */
@@ -66,3 +75,4 @@ Xft.hintstyle: hintfull
 Xft.dpi: 92
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
+
