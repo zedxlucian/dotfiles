@@ -4,7 +4,7 @@ dwm.normfgcolor:    #F8F8F2
 ! Background of icons & text on DWM status bar 
 dwm.normbgcolor:    #282A36 
 ! Selected background 
-dwm.selbgcolor:     #BD93F9
+dwm.selbgcolor:     #282A36
 ! Border 
 dwm.selbordercolor: #F8F8F2 
 ! Title bar 
@@ -28,6 +28,15 @@ st.background: #282A36
 *.col14:    #9AEDFE
 *.col7:     #BFBFBF
 *.col15:    #E6E6E6
+
+dmenu.background : #282A36
+dmenu.foreground : #F8F8F2
+dmenu.selbackground : #BD93F9 
+dmenu.selforeground : #F8F8F2
+dmenu.selhbackground : #50FA7B
+dmenu.selhforeground : #282A36
+dmenu.normhbackground : #5AF78E
+dmenu.normhforeground : #282A36
 
 /* Gruvbox theming */
 /* dwm.normfgcolor:    #F8F8F2 */
@@ -66,3 +75,4 @@ Xft.hintstyle: hintfull
 Xft.dpi: 92
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
+
