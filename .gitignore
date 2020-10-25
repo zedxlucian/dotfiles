@@ -4,3 +4,14 @@
 /vim/.vim/.netrwhist
 /config/.config/emacs/elpa/
 /config/.config/emacs/projectile-bookmarks.eld
+
+config/.config/nvim/autoload/plug.vim
+config/.config/nvim/plugged/dracula/
+config/.config/nvim/plugged/fzf.vim/
+config/.config/nvim/plugged/fzf/
+config/.config/nvim/plugged/indentLine/
+config/.config/nvim/plugged/nerdtree/
+config/.config/nvim/plugged/vim-airline/
+config/.config/nvim/plugged/vim-commentary/
+config/.config/nvim/plugged/vim-hexokinase/
+config/.config/nvim/plugged/vim-surround/
