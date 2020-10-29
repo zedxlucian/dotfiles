@@ -4,6 +4,9 @@
 
 ###---Autostart---###
 
+# Xresources is needed to theme DWM & ST.
+xrdb -merge "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" &
+
 # Status Bar
 dwmblocks &
 
@@ -36,9 +39,6 @@ unclutter -idle 3 &
 # Wallpaper
 nitrogen --restore &
 
-# Xresources is needed to theme DWM & ST.
-xrdb -merge "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" &
-
 # Emacs Daemon
 emacs --daemon &
 
@@ -50,7 +50,7 @@ megasync &
 
 # Start DWM
 while true; do
-	dwm>/dev/null 2>&1
+	dwm>/dev/null 2>&1 || exit
 done
 
 exec dwm

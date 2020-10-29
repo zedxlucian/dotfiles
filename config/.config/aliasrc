@@ -43,5 +43,5 @@ alias \
 	tmux="tmux -f "${XDG_CONFIG_HOME:-$HOME/.config}"/tmux/tmux.conf" \
 	mbsync="mbsync -c $XDG_CONFIG_HOME/isync/mbsyncrc" \
 	em="TERM=st-direct emacsclient -nw" \
-        emacs="emacsclient -c -a 'emacs'" \
+#        emacs="emacsclient -c -a 'emacs'" \
 	fontp="fontpreview-ueberzug"
