@@ -9,17 +9,16 @@ endif
 
 call plug#begin(system('echo -n "${XDG_CONFIG_HOME:-$HOME/.config}/nvim/plugged"'))
 Plug 'tpope/vim-surround'
-Plug 'preservim/nerdtree'
 Plug 'bling/vim-airline'
 Plug 'tpope/vim-commentary'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'Yggdroot/indentLine'
-Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'arcticicestudio/nord-vim'
 call plug#end()
 
-colorscheme dracula
+colorscheme nord
 set go=a
 set mouse=a
 set nohlsearch
@@ -52,15 +51,6 @@ set termguicolors
 
 " Splits open at the bottom and right, which is non-retarded, unlike vim defaults.
 	set splitbelow splitright
-
-" Nerd tree
-	map <leader>n :NERDTreeToggle<CR>
-	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-    if has('nvim')
-        let NERDTreeBookmarksFile = stdpath('data') . '/NERDTreeBookmarks'
-    else
-        let NERDTreeBookmarksFile = '~/.vim' . '/NERDTreeBookmarks'
-    endif
 
 " Shortcutting split navigation, saving a keypress:
 	map <C-h> <C-w>h
@@ -155,3 +145,15 @@ command! -bang -nargs=* GGrep
 
 " Hexokinase settings
 let g:Hexokinase_highlighters = [ 'backgroundfull' ]
+
+" NetRW
+let ghregex='\(^\|\s\s\)\zs\.\S\+'
+let g:netrw_list_hide=ghregex
+
+let g:netrw_liststyle= 3    " show the tree listing
+let g:netrw_banner=0
+
+let g:netrw_winsize = 0         "   set default window size to be always equal
+let g:netrw_preview = 1		    "	open splits to the right
+
+autocmd Filetype netrw setl bufhidden=delete
