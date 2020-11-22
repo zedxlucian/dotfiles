@@ -1,0 +1,55 @@
+#+title: Configuration de Doom Emacs
+
+* Configuration général
+** Apparance
+*** Polices
+Doom expose cinq variables (facultatives) pour contrôler les polices dans Doom. Ici sont les trois importantes:
+
+#+begin_src elisp
+ (setq doom-font (font-spec :family "Iosevka Term SS04" :size 16 :weight 'Regular)
+       doom-big-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'Regular)
+       doom-variable-pitch-font (font-spec :family "SF Pro Text"))
+#+end_src
+*** Theme
+On utilisera le theme Nord pour son jeux de couleurs finement contrasté.
+
+#+begin_src elisp
+(setq doom-theme 'doom-nord)
+#+end_src
+
+*** Numéros de ligne
+On définit les numéros de ligne afin de pouvoir accéder à la fonctionnalité de saut par nombre de lignes du mode majeur =evil= dans Emacs. On définit ici les numéros de ligne relatives qui selon mon opinion donne un meilleur contrôle sur cette fonction.
+
+#+begin_src elisp
+(setq display-line-numbers-type 'relative)
+#+end_src
+
+** Profil
+On définit les variables suivantes car certaines fonctionnalités l'utilisent pour nous identifier, e.g la configuration GPG, ou l'e-mail.
+
+#+begin_src elisp
+(setq user-full-name "Lydien SANDANASAMY"
+      user-mail-address "s.lydien@icloud.com")
+#+end_src
+
+* Configuration Org
+** Général
+
+On définit la police par défaut utilisé sur tous les fichiers avec l'extension =.org=. On utilisera la police *Sans Francisco Pro Text* d'Apple que j'apprécie pour son rendu profesionnel, et on gardera la police par défaut *Iosevka Term SS04*  pour certains types de texte comme des lignes de codes. Plusieurs méthodes existent afin d'achever cette tâche, mais on choisit d'ajouter le mode mineur =zen= afin de garder une uniformité dans notre configuration.
+
+#+begin_src elisp
+(add-hook! org-mode 'writeroom-mode)
+#+end_src
+
+On définit le répertoire par défaut des fichiers =.org=.
+
+#+begin_src elisp
+(setq org-directory "~/MEGA/org/")
+#+end_src
+
+** Roam
+On définit le répertoire par défaut des fichiers =org-roam=.
+
+#+begin_src elisp
+(setq org-roam-directory "~/MEGA/org/roam/")
+#+end_src
