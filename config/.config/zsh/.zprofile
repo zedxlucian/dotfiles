@@ -9,7 +9,7 @@ export EDITOR="nvim"
 export VISUAL="nvim"
 export TERMINAL="st"
 export BROWSER="firefox"
-
+export PRINTER="deskjet"
 export TIME_STYLE="+%d-%m-%Y %H:%M:%S"
 
 # ~/ Clean-up:
@@ -32,9 +32,8 @@ export DISPLAY=":0.0"
 export FZF_DEFAULT_COMMAND="fd -H . '/etc' $HOME '/usr'"
 export FZF_DEFAULT_OPTS="--layout=reverse --height 40%"
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
---color=dark
---color=fg:-1,bg:-1,hl:#5fff87,fg+:-1,bg+:-1,hl+:#ffaf5f
---color=info:#af87ff,prompt:#5fff87,pointer:#ff87d7,marker:#ff87d7,spinner:#ff87d7
+--color fg:#D8DEE9,bg:#2E3440,hl:#A3BE8C,fg+:#D8DEE9,bg+:#434C5E,hl+:#A3BE8C
+--color pointer:#BF616A,info:#4C566A,spinner:#4C566A,header:#4C566A,prompt:#81A1C1,marker:#EBCB8B
 '
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200' --select-1 --exit-0"
 
@@ -46,5 +45,8 @@ export FONTPREVIEW_FG_COLOR="#F8F8F2"
 # Export XDG environmental variables from '~/.config/user-dirs.dirs'
 eval "$(sed 's/^[^#].*/export &/g;t;d' ${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs)"
 
-# Start graphical server on tty1 if not already running.
-[ "$(tty)" = "/dev/tty1" ] && ! pgrep -x Xorg >/dev/null && startx "${XDG_CONFIG_HOME:-$HOME/.config}/X11/xinitrc" -- vt1 > $HOME/.local/share/xorg/Xorg.0.log 2>&1
+# Start graphical server on tty1 if not already running; This only works without display manager.
+# [ "$(tty)" = "/dev/tty1" ] && ! pgrep -x Xorg >/dev/null && startx "${XDG_CONFIG_HOME:-$HOME/.config}/X11/xinitrc" -- vt1 > $HOME/.local/share/xorg/Xorg.0.log 2>&1
+
+# Source xinitrc file to autostart applications; This only works with display manager.
+source "${XDG_CONFIG_HOME:-$HOME/.config}/X11/xinitrc"

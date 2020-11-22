@@ -8,6 +8,7 @@ if ! filereadable(system('echo -n "${XDG_CONFIG_HOME:-$HOME/.config}/nvim/autolo
 endif
 
 call plug#begin(system('echo -n "${XDG_CONFIG_HOME:-$HOME/.config}/nvim/plugged"'))
+Plug 'tmsvg/pear-tree'
 Plug 'tpope/vim-surround'
 Plug 'bling/vim-airline'
 Plug 'tpope/vim-commentary'
@@ -19,6 +20,7 @@ Plug 'arcticicestudio/nord-vim'
 call plug#end()
 
 colorscheme nord
+set guicursor=n-v-c-sm:block,i-ci-ve:ver25-Cursor,r-cr-o:hor20
 set go=a
 set mouse=a
 set nohlsearch

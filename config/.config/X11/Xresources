@@ -127,11 +127,3 @@ dmenu.normhforeground : nord0
 *.col13: nord15
 *.col14: nord7
 *.col15: nord6
-
-Xft.autohint: 0
-Xft.antialias: 1
-Xft.hinting: true
-Xft.hintstyle: hintfull
-Xft.dpi: 92
-Xft.rgba: rgb
-Xft.lcdfilter: lcddefault

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # xinitrc runs automatically when you run startx.
 
@@ -10,14 +10,20 @@ xrdb -merge "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" &
 # Status Bar
 dwmblocks &
 
+# Notification system
+dunst &
+
+# Wallpaper
+nitrogen --restore &
+
 # Keyboard Layout
 # 1. Set default keyboard leyout
 # 2. Set both caps lock keys to toggle caps behavior
 # 3. Make caps lock act as Ctrl when pressed with other key
 setxkbmap -layout fr \
-          -option grp:lctrl_lwin_toggle \
-          -option shift:both_capslock \
-          -option caps:ctrl_modifier &
+	  -option grp:lctrl_lwin_toggle \
+	  -option shift:both_capslock \
+	  -option caps:ctrl_modifier &
 # Set caps lock (single key press) behavior to be Escape
 killall xcape 2>/dev/null ; xcape -e 'Caps_Lock=Escape' &
 
@@ -25,19 +31,13 @@ killall xcape 2>/dev/null ; xcape -e 'Caps_Lock=Escape' &
 xset r rate 300 50 &
 
 # Automatic Screen-Lock
-xss-lock  -- betterlockscreen -l blur &
-
-# Notification system
-dunst &
+# xss-lock  -- betterlockscreen -l blur &
 
 # ??
 xsetroot -cursor_name left_ptr &
 
 # Program that hides the mouse after 3 seconds of idle
 unclutter -idle 3 &
-
-# Wallpaper
-nitrogen --restore &
 
 # Emacs Daemon
 emacs --daemon &
@@ -48,9 +48,15 @@ numlockx on &
 # Cloud provider synching software
 megasync &
 
-# Start DWM
-while true; do
-	dwm>/dev/null 2>&1 || exit
-done
+# Polkit authentification agent
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 
-exec dwm
+# Compositor
+# picom --experimental-backends &
+
+# # Start DWM; This only works without display manager.
+# while true; do
+# 	dwm>/dev/null 2>&1 || exit
+# done
+
+# exec dwm
