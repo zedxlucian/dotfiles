@@ -52,7 +52,7 @@ megasync &
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 
 # Compositor
-# picom --experimental-backends &
+picom -b &
 
 # # Start DWM; This only works without display manager.
 # while true; do
