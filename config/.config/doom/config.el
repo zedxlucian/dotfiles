@@ -1,8 +1,7 @@
-(setq doom-font (font-spec :family "monospace" :size 16 :weight 'Regular)
-      doom-big-font (font-spec :family "monospace" :size 24 :weight 'Regular)
-      doom-variable-pitch-font (font-spec :family "sans" :size 20 :weight 'Regular))
+(setq doom-font (font-spec :family "monospace" :size 16)
+      doom-variable-pitch-font (font-spec :family "sans"))
 
-(setq doom-theme 'doom-nord)
+(setq doom-theme 'doom-one-light)
 
 (setq display-line-numbers-type 'relative)
 
@@ -14,8 +13,8 @@
 
 (defun lydien/org-mode-setup ()
   (org-indent-mode)
-  (mixed-pitch-mode 1)
   (visual-line-mode 1)
+  (hide-mode-line-mode 1)
   (display-line-numbers-mode 0))
 
 (defun lydien/org-mode-visual-fill ()
@@ -24,14 +23,6 @@
   (visual-fill-column-mode 1))
 
 (add-hook! org-mode
-      (load-theme 'doom-nord t)
-      (custom-set-faces!
-        '(outline-1 :weight Medium :height 200)
-        '(outline-2 :weight Medium :height 190)
-        '(outline-3 :weight Medium :height 180)
-        '(outline-4 :weight Medium :height 170)
-        '(outline-5 :weight Medium :height 160)
-        '(outline-6 :weight Medium :height 160))
       (lydien/org-mode-setup)
       (lydien/org-mode-visual-fill))
 
@@ -47,10 +38,6 @@
 (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●"))
 
 (require 'org-tempo)
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-(add-to-list 'org-structure-template-alist '("el" . "emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("py" . "python"))
-
-(after! ivy-posframe
-(setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center))))
-;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
+(add-to-list 'org-structure-template-alist '("py" . "src python"))

@@ -4,24 +4,21 @@
 ** Général
 *** Apparance
 **** Polices
-
 Doom expose cinq variables (facultatives) pour contrôler les polices dans Doom. Ici sont les trois importantes:
 
 #+begin_src emacs-lisp
-  (setq doom-font (font-spec :family "monospace" :size 16 :weight 'Regular)
-        doom-big-font (font-spec :family "monospace" :size 24 :weight 'Regular)
-        doom-variable-pitch-font (font-spec :family "sans" :size 20 :weight 'Regular))
+  (setq doom-font (font-spec :family "monospace" :size 16)
+        doom-variable-pitch-font (font-spec :family "sans"))
 #+end_src
 
 **** Theme
-On utilisera le theme Nord pour son jeux de couleurs finement contrasté.
+On utilisera le theme =modus-operandi= pour son jeux de couleurs finement contrasté.
 
 #+begin_src emacs-lisp
- (setq doom-theme 'doom-nord)
+ (setq doom-theme 'doom-one-light)
 #+end_src
 
 *** Numéros de ligne
-
 On définit les numéros de ligne afin de pouvoir accéder à la fonctionnalité de saut par nombre de lignes du mode majeur =evil= dans Emacs. On définit ici les numéros de ligne relatives qui selon mon opinion donne un meilleur contrôle sur cette fonction.
 
 #+begin_src emacs-lisp
@@ -29,7 +26,6 @@ On définit les numéros de ligne afin de pouvoir accéder à la fonctionnalité
 #+end_src
 
 *** Profil
-
 On définit les variables suivantes car certaines fonctionnalités l'utilisent pour nous identifier, e.g la configuration GPG, ou l'e-mail.
 
 #+begin_src emacs-lisp
@@ -37,7 +33,6 @@ On définit les variables suivantes car certaines fonctionnalités l'utilisent p
        user-mail-address "s.lydien@icloud.com")
 #+end_src
 *** Gestion des fenêtres
-
 Quand on décide de créer une nouvelle fenêtre, on déplacera le curseur vers celle-ci.
 
 #+begin_src emacs-lisp
@@ -47,11 +42,13 @@ Quand on décide de créer une nouvelle fenêtre, on déplacera le curseur vers 
 ** Org-mode
 *** Général
 
+Ici, on définit l'apparence du mode majeur Org, on enlève donc les modes suivants : =mode-line= , =mixed-pitched-mode=, =display-line-numbers-mode=, =visual-line-mode=, =org-indent-mode=.
+
 #+begin_src emacs-lisp
 (defun lydien/org-mode-setup ()
   (org-indent-mode)
-  (mixed-pitch-mode 1)
   (visual-line-mode 1)
+  (hide-mode-line-mode 1)
   (display-line-numbers-mode 0))
 
 (defun lydien/org-mode-visual-fill ()
@@ -60,14 +57,6 @@ Quand on décide de créer une nouvelle fenêtre, on déplacera le curseur vers 
   (visual-fill-column-mode 1))
 
 (add-hook! org-mode
-      (load-theme 'doom-nord t)
-      (custom-set-faces!
-        '(outline-1 :weight Medium :height 200)
-        '(outline-2 :weight Medium :height 190)
-        '(outline-3 :weight Medium :height 180)
-        '(outline-4 :weight Medium :height 170)
-        '(outline-5 :weight Medium :height 160)
-        '(outline-6 :weight Medium :height 160))
       (lydien/org-mode-setup)
       (lydien/org-mode-visual-fill))
 
@@ -86,19 +75,32 @@ Quand on décide de créer une nouvelle fenêtre, on déplacera le curseur vers 
 #+begin_src emacs-lisp
 (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●"))
 #+end_src
+
 *** Org-babel
+
 #+begin_src emacs-lisp
 (require 'org-tempo)
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-(add-to-list 'org-structure-template-alist '("el" . "emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("py" . "python"))
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
 #+end_src
-** Ivy
 
-On règle la position de =ivy childframe= .
+** Dired
 
 #+begin_src emacs-lisp
-(after! ivy-posframe
-(setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center))))
-;; (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
-#+end_src
+(add-hook! dired-mode 'dired-hide-details-mode)
+#+end_src emacs-lisp
+
+** Email
+
+#+begin_src emacs-lisp
+;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
+(set-email-account! "emacs"
+  '((mu4e-sent-folder       . "/emacs/Sent Mail")
+    (mu4e-drafts-folder     . "/emacs/Drafts")
+    (mu4e-trash-folder      . "/emacs/Trash")
+    (mu4e-refile-folder     . "/emacs/All Mail")
+    (smtpmail-smtp-user     . "s.lydien@gmail.com")
+    (mu4e-compose-signature . "---\nLydien Sandanasamy"))
+  t)
+#+end_src emacs-lisp
