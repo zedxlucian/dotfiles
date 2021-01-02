@@ -1,0 +1,163 @@
+#!/bin/sh
+
+# This script is inspired by HEXDSL's youtube video called [[yt:https://www.youtube.com/watch?v=UEmPboaTDpQ&t=342s][DWM's patching guide]]
+# This script provides an interface to patch suckless's softwares. The objectif is to make it easier on the user to try out new patches and use them.
+
+# Variables declarations (change these according to your needs):
+DOTFILES="$HOME/dotfiles/home/suckless"
+PROJECT_NAME="$(basename $(pwd))"
+DIFF_DIR="${DOTFILES}/${PROJECT_NAME}_diffs"
+OLD_DIFF_DIR="${DOTFILES}/${PROJECT_NAME}_diffs/old"
+
+# Functions declarations:
+rebase_make() {
+    create_diff &&
+    git branch custom && git checkout custom &&
+    for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
+        if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
+            echo $branch
+            git rebase --rebase-merges $branch
+        fi
+    done
+    make
+    git checkout master && git branch -D custom &&
+    clean_reset
+}
+
+rebase_make_install() {
+    create_diff &&
+    git branch custom && git checkout custom &&
+    for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
+        if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
+            echo $branch
+            git rebase --rebase-merges $branch
+        fi
+    done
+    make && sudo make clean install &&
+    git checkout master && git branch -D custom &&
+    clean_reset
+}
+
+create_diff() {
+    rm -rf "$OLD_DIFF_DIR" > /dev/null 2>&1 && mkdir -p "$OLD_DIFF_DIR" && mkdir -p "$DIFF_DIR" && mv "$DIFF_DIR"*.diff "$OLD_DIFF_DIR" > /dev/null 2>&1 || true &&
+    clean_reset &&
+    for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
+        if [ "$branch" != "master" ];then
+            git diff master..$branch > "${DIFF_DIR}/${PROJECT_NAME}_${branch}.diff"
+        fi
+    done
+}
+
+install_patch() {
+    if [ ! -d "$DIFF_DIR" ];then
+        echo "No patches"
+        exit 1
+    fi
+    for i in $(ls "$DIFF_DIR"/*.diff);do
+        name=$(echo $i | sed -e 's/\/.*\///' -e 's/\.diff//' -e "s/${PROJECT_NAME}_//")
+        echo "Checking out master"
+        git checkout master > /dev/null 2>&1 &&
+        echo "Creating branch $name"
+        git branch $name > /dev/null 2>&1 &&
+        echo "Checking out $name"
+        git checkout $name > /dev/null 2>&1 &&
+        echo "Applying patch : $name"
+        git apply "$i" > /dev/null 2>&1 &&
+        echo "Adding and commiting"
+        git add -A && git commit -m "Feature: Add $name patch" > /dev/null 2>&1
+    done
+    echo -e "\n"
+    git checkout master
+}
+
+helper() {
+  printf "Usage:
+  $ volt -[r/p/d/h]
+  $ volt --[rebase/patch/diff/debug/help]\n
+Options:
+  -r or --rebase        Rebase all selected branches, make and make install.
+  -p or --patch         Patch all selected branches, make, & make install.
+  -d or --diff          Create diff of all branches.
+  --debug               Merge all selected branches and make only.
+  -h or --help          Shows this help & usage.\n"
+}
+
+clean_reset() {
+    git checkout master &&
+    make clean &&
+    rm -f config.h && git reset --hard origin/master
+}
+
+skip=false
+for op in "$@";do
+if $skip;then skip=false;continue;fi
+case "$op" in
+    -r|--rebase)
+        case $PROJECT_NAME in
+            dwm | st | dmenu)
+                rebase_make_install
+                shift
+                exit 0
+                ;;
+            *)
+                printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot rebase... exiting....\n"
+                shift
+                exit 1
+                ;;
+        esac
+    ;;
+    -p|--patch)
+        case $PROJECT_NAME in
+            dwm | st | dmenu)
+                clean_reset && install_patch
+                shift
+                exit 0
+                ;;
+            *)
+                printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot patch... exiting....\n"
+                shift
+                exit 1
+                ;;
+        esac
+    ;;
+    -d|--diff)
+        case $PROJECT_NAME in
+            dwm | st | dmenu)
+                create_diff
+                shift
+                exit 0
+                ;;
+            *)
+                printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot create diffs... exiting....\n"
+                shift
+                exit 1
+                ;;
+        esac
+    ;;
+    --debug)
+        case $PROJECT_NAME in
+            dwm | st | dmenu)
+                rebase_make
+                shift
+                exit 0
+                ;;
+            *)
+                printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot debug... exiting....\n"
+                shift
+                exit 1
+                ;;
+        esac
+    ;;
+    -h|--help)
+        helper
+        shift
+        exit 0
+        ;;
+    *)
+        echo "E: Invalid option $1"
+        helper
+        shift
+        exit 1
+        ;;
+esac
+done
