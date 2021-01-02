@@ -7,9 +7,6 @@
 # Xresources is needed to theme DWM & ST.
 xrdb -merge "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" &
 
-# Status Bar
-dwmblocks &
-
 # Notification system
 dunst &
 
@@ -24,8 +21,6 @@ setxkbmap -layout fr \
 	  -option grp:lctrl_lwin_toggle \
 	  -option shift:both_capslock \
 	  -option caps:ctrl_modifier &
-# Set caps lock (single key press) behavior to be Escape
-killall xcape 2>/dev/null ; xcape -e 'Caps_Lock=Escape' &
 
 # Key Repeat Delay And Interval
 xset r rate 300 50 &
@@ -55,8 +50,8 @@ megasync &
 picom -b &
 
 # # Start DWM; This only works without display manager.
-# while true; do
-# 	dwm>/dev/null 2>&1 || exit
-# done
+while true; do
+	dwm>/dev/null 2>&1 || exit
+done
 
-# exec dwm
+exec dwm

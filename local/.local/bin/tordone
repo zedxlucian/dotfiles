@@ -1,4 +1,0 @@
-#!/bin/sh
-# Sends a notification when a torrent is completed in transmission
-
-notify-send "Transmission-daemon" "$TR_TORRENT_NAME a fini de télécharger"

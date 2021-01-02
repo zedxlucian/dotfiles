@@ -5,8 +5,8 @@ export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | paste -sd ':')"
 export PATH="$PATH:$HOME/.emacs.d/bin"
 
 # Default programs
-export EDITOR="nvim"
-export VISUAL="nvim"
+export EDITOR="emacs"
+export VISUAL="emacs"
 export TERMINAL="st"
 export BROWSER="firefox"
 export PRINTER="deskjet"
@@ -20,11 +20,6 @@ export XDG_LOCAL_HOME="$HOME/.local"
 
 export XINITRC="${XDG_CONFIG_HOME:-$HOME/.config}/X11/xinitrc"
 export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
-export NOTMUCH_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/notmuch-config"
-export GTK2_RC_FILES="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-2.0/gtkrc-2.0"
-export TMUX_TMPDIR="${XDG_RUNTIME_DIR:-/run/user/1000}"
-export WGETRC="${XDG_CONFIG_HOME:-$HOME/.config}/wget/wgetrc"
-export PASSWORD_STORE_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/password-store"
 export LESSHISTFILE="-"
 export DISPLAY=":0.0"
 
@@ -46,7 +41,4 @@ export FONTPREVIEW_FG_COLOR="#F8F8F2"
 eval "$(sed 's/^[^#].*/export &/g;t;d' ${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs)"
 
 # Start graphical server on tty1 if not already running; This only works without display manager.
-# [ "$(tty)" = "/dev/tty1" ] && ! pgrep -x Xorg >/dev/null && startx "${XDG_CONFIG_HOME:-$HOME/.config}/X11/xinitrc" -- vt1 > $HOME/.local/share/xorg/Xorg.0.log 2>&1
-
-# Source xinitrc file to autostart applications; This only works with display manager.
-source "${XDG_CONFIG_HOME:-$HOME/.config}/X11/xinitrc"
+[ "$(tty)" = "/dev/tty1" ] && ! pgrep -x Xorg >/dev/null && startx "${XDG_CONFIG_HOME:-$HOME/.config}/X11/xinitrc" -- vt1 > $HOME/.local/share/xorg/Xorg.0.log 2>&1

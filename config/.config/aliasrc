@@ -39,9 +39,6 @@ alias \
 
 # Some other stuff
 alias \
-	abook="abook --config "${XDG_CONFIG_HOME:-$HOME/.config}"/abook/abookrc --datafile "${XDG_DATA_HOME:-$HOME/.local/share}"/abook/addressbook" \
-	tmux="tmux -f "${XDG_CONFIG_HOME:-$HOME/.config}"/tmux/tmux.conf" \
 	mbsync="mbsync -c $XDG_CONFIG_HOME/isync/mbsyncrc" \
 	em="TERM=st-direct emacsclient -nw" \
-#        emacs="emacsclient -c -a 'emacs'" \
-	fontp="fontpreview-ueberzug"
+    emacs="emacsclient -c -a 'emacs'"

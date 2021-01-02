@@ -35,9 +35,9 @@ export KEYTIMEOUT=1
 
 # Default editor for remote connections
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='nvim'
+  export EDITOR='emacs'
 else
-  export EDITOR='nvim'
+  export EDITOR='emacs'
 fi
 
 #AUTO-COMPLETION!!
