@@ -1,0 +1,154 @@
+#!/bin/sh
+
+ALWAYS="
+Xft.autohint: 0
+Xft.antialias: 1
+Xft.hinting: true
+Xft.hintstyle: hintslight
+Xft.dpi: 96
+Xft.rgba: rgb
+Xft.lcdfilter: lcddefault
+/* DMENU */
+dmenu.font:JetBrainsMono Nerd Font Mono:style=Regular:size=12:antialias=true:autohint=true
+
+/* ST */
+st.font:JetBrainsMono Nerd Font Mono:style=Regular:size=12:antialias=true:autohint=true
+st.cwscale: 0.90
+st.chscale: 1.05
+
+
+/* ! Dracula Xresources palette */
+*.color0:     #000000
+*.color1:     #FF5555
+*.color2:     #50FA7B
+*.color3:     #F1FA8C
+*.color4:     #BD93F9
+*.color5:     #FF79C6
+*.color6:     #8BE9FD
+*.color7:     #BFBFBF
+
+*.color8:     #4D4D4D
+*.color9:     #FF6E67
+*.color10:    #5AF78E
+*.color11:    #F4F99D
+*.color12:    #CAA9FA
+*.color13:    #FF92D0
+*.color14:    #9AEDFE
+*.color15:    #E6E6E6
+
+*.foreground: #f8f8f2
+
+dwm.topbar: 1
+dwm.borderpx: 3
+dwm.barborder: 3
+
+dmenu.borderpx: 3
+"
+
+DARK_MODE="
+/* DARK MODE */
+dwm.normbgcolor: #000000
+dwm.normbordercolor: #000000
+dwm.normfgcolor: #ffffff
+dwm.selfgcolor: #000000
+dwm.selbordercolor: #ababab
+dwm.selbgcolor: #ffffff
+
+dmenu.background: #000000
+dmenu.foreground: #ffffff
+dmenu.selbackground: #ffffff
+dmenu.selforeground:#000000
+
+dmenu.highlightbackground: #000000
+dmenu.higlightselbackground: #ffffff
+
+dmenu.highlightforeground: #FF92D0
+dmenu.highlightselforeground: #005577
+
+dmenu.outbackground:#ffffff
+dmenu.outforeground:#000000
+
+*.background: #000000
+"
+
+LIGHT_MODE="
+/* LIGHT MODE */
+dwm.normbgcolor: #ffffff
+dwm.normfgcolor: #000000
+dwm.normbordercolor: #000000
+
+dwm.selbgcolor: #000000
+dwm.selfgcolor: #ffffff
+dwm.selbordercolor: #ffffff
+
+dmenu.background: #ffffff
+dmenu.foreground: #000000
+dmenu.selbackground: #000000
+dmenu.selforeground:#ffffff
+
+dmenu.highlightbackground: #ffffff
+dmenu.higlightselbackground: #000000
+
+dmenu.highlightforeground: #005577
+dmenu.highlightselforeground:#FF92D0
+
+dmenu.outbackground:#ffffff
+dmenu.outforeground:#000000
+
+*.background: #282a36
+"
+
+if [ -f $1 ]
+then
+
+	PROMPT="$(echo -e "Light\nDark" | dmenu -p "Change mode to:" -i -g 2 -l 2 -c)"
+
+	if [ "$PROMPT" = "Light" ]
+	then
+		CHOOSED_CONFIG+="$ALWAYS $LIGHT_MODE"
+		echo "$CHOOSED_CONFIG" > $HOME/.config/X11/Xresources &&
+		xrdb -merge $HOME/.config/X11/Xresources &&
+		dwmc reload &&
+		kill -s USR1 $(pidof st) &&
+		genzathurarc > ~/.config/zathura/zathurarc
+
+	elif [ "$PROMPT" = "Dark" ]
+	then
+		CHOOSED_CONFIG+="$ALWAYS $DARK_MODE"
+		echo "$CHOOSED_CONFIG" > $HOME/.config/X11/Xresources &&
+		xrdb -merge $HOME/.config/X11/Xresources &&
+		dwmc reload &&
+		kill -s USR1 $(pidof st) &&
+		kill -s USR1 $(pidof tabbed) &&
+		genzathurarc > ~/.config/zathura/zathurarc
+
+	fi
+
+else
+
+	if [ "$1" = "Light" -o "$1" = "light" ] ; then
+		CHOOSED_CONFIG+="$ALWAYS $LIGHT_MODE"
+		echo "$CHOOSED_CONFIG" > $HOME/.config/X11/Xresources &&
+		xrdb -merge $HOME/.config/X11/Xresources &&
+		dwmc reload &&
+		kill -s USR1 $(pidof st) &&
+		genzathurarc > ~/.config/zathura/zathurarc
+
+	elif [ "$1" = "Dark" -o "$1" = "dark" ] ; then
+		CHOOSED_CONFIG+="$ALWAYS $DARK_MODE"
+		echo "$CHOOSED_CONFIG" > $HOME/.config/X11/Xresources &&
+		xrdb -merge $HOME/.config/X11/Xresources &&
+		dwmc reload &&
+		kill -s USR1 $(pidof st) &&
+		genzathurarc > ~/.config/zathura/zathurarc
+
+
+	elif [ "$1" = "toggle" -o "$1" = "Toggle" ] ; then
+		if grep -q "DARK MODE" $HOME/.config/X11/Xresources
+		then
+			change_mode light
+		else
+			change_mode dark
+		fi
+	fi
+fi
