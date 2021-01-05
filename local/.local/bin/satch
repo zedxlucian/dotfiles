@@ -20,8 +20,8 @@ rebase_make() {
         fi
     done
     make
-    git checkout master && git branch -D custom &&
-    clean_reset
+    # git checkout master && git branch -D custom &&
+    # clean_reset
 }
 
 rebase_make_install() {
@@ -33,7 +33,7 @@ rebase_make_install() {
             git rebase --rebase-merges $branch
         fi
     done
-    make && sudo make clean install &&
+    make && sudo make install &&
     git checkout master && git branch -D custom &&
     clean_reset
 }

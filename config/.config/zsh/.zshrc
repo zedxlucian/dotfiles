@@ -1,3 +1,6 @@
+# System fetching tool
+echo "" && afetch
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -57,3 +60,4 @@ source /usr/share/fzf/key-bindings.zsh
 bindkey '^R' fzf-history-widget
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+

@@ -5,15 +5,15 @@ Xft.autohint: 0
 Xft.antialias: 1
 Xft.hinting: true
 Xft.hintstyle: hintslight
-Xft.dpi: 96
+Xft.dpi: 91
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
 /* DMENU */
-dmenu.font:JetBrainsMono Nerd Font Mono:style=Regular:size=12:antialias=true:autohint=true
+dmenu.font:SFMono Nerd Font Mono:style=Regular:size=12:antialias=true:autohint=true
 
 /* ST */
-st.font:JetBrainsMono Nerd Font Mono:style=Regular:size=12:antialias=true:autohint=true
-st.cwscale: 0.90
+st.font:SFMono Nerd Font Mono:style=Regular:size=10:antialias=true:autohint=true
+st.cwscale: 1.00
 st.chscale: 1.05
 
 
@@ -39,10 +39,10 @@ st.chscale: 1.05
 *.foreground: #f8f8f2
 
 dwm.topbar: 1
-dwm.borderpx: 3
-dwm.barborder: 3
+dwm.borderpx: 2
+dwm.barborder: 2
 
-dmenu.borderpx: 3
+dmenu.borderpx: 2
 "
 
 DARK_MODE="
@@ -101,7 +101,7 @@ dmenu.outforeground:#000000
 if [ -f $1 ]
 then
 
-	PROMPT="$(echo -e "Light\nDark" | dmenu -p "Change mode to:" -i -g 2 -l 2 -c)"
+	PROMPT="$(echo -e "Light\nDark" | dmenu -p "Change mode to:")"
 
 	if [ "$PROMPT" = "Light" ]
 	then
@@ -109,7 +109,16 @@ then
 		echo "$CHOOSED_CONFIG" > $HOME/.config/X11/Xresources &&
 		xrdb -merge $HOME/.config/X11/Xresources &&
 		dwmc reload &&
-		kill -s USR1 $(pidof st) &&
+		kill -s USR1 $(pidof st)
+
+		if ls /tmp/nvimsocket-* 1> /dev/null 2>&1; then
+			cmdvim "AirlineTheme sol"
+		fi
+
+		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"sol"/' $HOME/.config/nvim/init.vim
+
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc"/' $HOME/.config/gtk-2.0/gtkrc-2.0
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"WhiteSur-light"/' $HOME/.config/gtk-3.0/settings.ini
 		genzathurarc > ~/.config/zathura/zathurarc
 
 	elif [ "$PROMPT" = "Dark" ]
@@ -118,8 +127,16 @@ then
 		echo "$CHOOSED_CONFIG" > $HOME/.config/X11/Xresources &&
 		xrdb -merge $HOME/.config/X11/Xresources &&
 		dwmc reload &&
-		kill -s USR1 $(pidof st) &&
-		kill -s USR1 $(pidof tabbed) &&
+		kill -s USR1 $(pidof st)
+
+		if ls /tmp/nvimsocket-* 1> /dev/null 2>&1; then
+			cmdvim "AirlineTheme minimalist"
+		fi
+
+		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"minimalist"/' $HOME/.config/nvim/init.vim
+
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Shades-of-gray"/' $HOME/.config/gtk-2.0/gtkrc-2.0
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Whitesur-dark"/' $HOME/.config/gtk-3.0/settings.ini
 		genzathurarc > ~/.config/zathura/zathurarc
 
 	fi
@@ -131,7 +148,16 @@ else
 		echo "$CHOOSED_CONFIG" > $HOME/.config/X11/Xresources &&
 		xrdb -merge $HOME/.config/X11/Xresources &&
 		dwmc reload &&
-		kill -s USR1 $(pidof st) &&
+		kill -s USR1 $(pidof st)
+
+		if ls /tmp/nvimsocket-* 1> /dev/null 2>&1; then
+			cmdvim "AirlineTheme sol"
+		fi
+
+		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"sol"/' $HOME/.config/nvim/init.vim
+
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc"/' $HOME/.config/gtk-2.0/gtkrc-2.0
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Whitesur-light"/' $HOME/.config/gtk-3.0/settings.ini
 		genzathurarc > ~/.config/zathura/zathurarc
 
 	elif [ "$1" = "Dark" -o "$1" = "dark" ] ; then
@@ -139,9 +165,17 @@ else
 		echo "$CHOOSED_CONFIG" > $HOME/.config/X11/Xresources &&
 		xrdb -merge $HOME/.config/X11/Xresources &&
 		dwmc reload &&
-		kill -s USR1 $(pidof st) &&
-		genzathurarc > ~/.config/zathura/zathurarc
+		kill -s USR1 $(pidof st)
 
+		if ls /tmp/nvimsocket-* 1> /dev/null 2>&1; then
+			cmdvim "AirlineTheme minimalist"
+		fi
+
+		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"minimalist"/' $HOME/.config/nvim/init.vim
+
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Shades-of-gray"/' $HOME/.config/gtk-2.0/gtkrc-2.0
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Whitesur-dark"/' $HOME/.config/gtk-3.0/settings.ini
+		genzathurarc > ~/.config/zathura/zathurarc
 
 	elif [ "$1" = "toggle" -o "$1" = "Toggle" ] ; then
 		if grep -q "DARK MODE" $HOME/.config/X11/Xresources

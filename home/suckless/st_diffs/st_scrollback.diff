@@ -336,15 +336,16 @@ index abbbe4b..24cac0d 100644
  	term.ocy = term.c.y;
  	xfinishdraw();
 diff --git a/st.h b/st.h
-index 3d351b6..36cdb65 100644
+index 3d351b6..27339b3 100644
 --- a/st.h
 +++ b/st.h
-@@ -81,12 +81,15 @@ void die(const char *, ...);
+@@ -81,12 +81,16 @@ void die(const char *, ...);
  void redraw(void);
  void draw(void);
  
 +void kscrolldown(const Arg *);
 +void kscrollup(const Arg *);
++void externalpipe(const Arg *);
  void printscreen(const Arg *);
  void printsel(const Arg *);
  void sendbreak(const Arg *);

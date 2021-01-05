@@ -1,5 +1,79 @@
+diff --git a/st.c b/st.c
+index abbbe4b..536c09a 100644
+--- a/st.c
++++ b/st.c
+@@ -1878,12 +1878,23 @@ strhandle(void)
+ 			}
+ 			return;
+ 		case 4: /* color set */
+-			if (narg < 3)
++		case 10: /* foreground set */
++		case 11: /* background set */
++		case 12: /* cursor color */
++			if ((par == 4 && narg < 3) || narg < 2)
+ 				break;
+-			p = strescseq.args[2];
++			p = strescseq.args[((par == 4) ? 2 : 1)];
+ 			/* FALLTHROUGH */
+ 		case 104: /* color reset, here p = NULL */
+-			j = (narg > 1) ? atoi(strescseq.args[1]) : -1;
++			if (par == 10)
++				j = defaultfg;
++			else if (par == 11)
++				j = defaultbg;
++			else if (par == 12)
++				j = defaultcs;
++			else
++				j = (narg > 1) ? atoi(strescseq.args[1]) : -1;
++
+ 			if (xsetcolorname(j, p)) {
+ 				if (par == 104 && narg <= 1)
+ 					return; /* color reset without parameter */
+@@ -1894,6 +1905,8 @@ strhandle(void)
+ 				 * TODO if defaultbg color is changed, borders
+ 				 * are dirty
+ 				 */
++				if (j == defaultbg)
++						xclearwin();
+ 				redraw();
+ 			}
+ 			return;
+diff --git a/st.h b/st.h
+index 3d351b6..0b9a6bc 100644
+--- a/st.h
++++ b/st.h
+@@ -77,6 +77,13 @@ typedef union {
+ 	const char *s;
+ } Arg;
+ 
++typedef struct {
++	uint b;
++	uint mask;
++	void (*func)(const Arg *);
++	const Arg arg;
++} MouseKey;
++
+ void die(const char *, ...);
+ void redraw(void);
+ void draw(void);
+@@ -123,3 +130,6 @@ extern char *termname;
+ extern unsigned int tabspaces;
+ extern unsigned int defaultfg;
+ extern unsigned int defaultbg;
++extern unsigned int defaultcs;
++extern float alpha;
++extern MouseKey mkeys[];
+diff --git a/win.h b/win.h
+index e6e4369..323dfae 100644
+--- a/win.h
++++ b/win.h
+@@ -38,3 +38,4 @@ void xsetpointermotion(int);
+ void xsetsel(char *);
+ int xstartdraw(void);
+ void xximspot(int, int);
++void xclearwin(void);
 diff --git a/x.c b/x.c
-index 120e495..29e84e5 100644
+index 120e495..2fada47 100644
 --- a/x.c
 +++ b/x.c
 @@ -14,6 +14,7 @@
@@ -30,7 +104,56 @@ index 120e495..29e84e5 100644
  /* X modifiers */
  #define XK_ANY_MOD    UINT_MAX
  #define XK_NO_MOD     0
-@@ -828,8 +842,8 @@ xclear(int x1, int y1, int x2, int y2)
+@@ -188,6 +202,7 @@ static int match(uint, uint);
+ 
+ static void run(void);
+ static void usage(void);
++static char* getusedfont(void);
+ 
+ static void (*handler[LASTEvent])(XEvent *) = {
+ 	[KeyPress] = kpress,
+@@ -254,6 +269,12 @@ static char *opt_title = NULL;
+ 
+ static int oldbutton = 3; /* button event on startup: 3 = release */
+ 
++char*
++getusedfont()
++{
++	return (opt_font == NULL)? font : opt_font;
++}
++
+ void
+ clipcopy(const Arg *dummy)
+ {
+@@ -305,7 +326,8 @@ void
+ zoomabs(const Arg *arg)
+ {
+ 	xunloadfonts();
+-	xloadfonts(usedfont, arg->f);
++	xloadfonts(getusedfont(), arg->f);
++	xloadsparefonts();
+ 	cresize(0, 0);
+ 	redraw();
+ 	xhints();
+@@ -460,6 +482,8 @@ void
+ bpress(XEvent *e)
+ {
+ 	struct timespec now;
++	MouseShortcut *ms;
++	MouseKey *mk;
+ 	int snap;
+ 
+ 	if (IS_SET(MODE_MOUSE) && !(e->xbutton.state & forcemousemod)) {
+@@ -825,11 +849,17 @@ xclear(int x1, int y1, int x2, int y2)
+ 			x1, y1, x2-x1, y2-y1);
+ }
+ 
++void
++xclearwin(void)
++{
++	xclear(0, 0, win.w, win.h);
++}
++
  void
  xhints(void)
  {
@@ -41,7 +164,7 @@ index 120e495..29e84e5 100644
  	XWMHints wm = {.flags = InputHint, .input = 1};
  	XSizeHints *sizeh;
  
-@@ -1104,8 +1118,6 @@ xinit(int cols, int rows)
+@@ -1104,8 +1134,6 @@ xinit(int cols, int rows)
  	pid_t thispid = getpid();
  	XColor xmousefg, xmousebg;
  
@@ -50,66 +173,160 @@ index 120e495..29e84e5 100644
  	xw.scr = XDefaultScreen(xw.dpy);
  	xw.vis = XDefaultVisual(xw.dpy, xw.scr);
  
-@@ -1977,6 +1989,58 @@ run(void)
- 		drawing = 0;
+@@ -1978,6 +2006,152 @@ run(void)
  	}
  }
-+int
-+resource_load(XrmDatabase db, char *name, enum resource_type rtype, void *dst)
+ 
++int cursorblinkstate = 0;
++
++#define XRESOURCE_LOAD_META(NAME)					\
++	if(!XrmGetResource(xrdb, "st." NAME, "st." NAME, &type, &ret))	\
++		XrmGetResource(xrdb, "*." NAME, "*." NAME, &type, &ret); \
++	if (ret.addr != NULL && !strncmp("String", type, 64))
++
++#define XRESOURCE_LOAD_STRING(NAME, DST)	\
++	XRESOURCE_LOAD_META(NAME)		\
++		DST = ret.addr;
++#define XRESOURCE_LOAD_CHAR(NAME, DST)		\
++	XRESOURCE_LOAD_META(NAME)		\
++		DST = ret.addr[0];
++
++#define XRESOURCE_LOAD_INTEGER(NAME, DST)		\
++	XRESOURCE_LOAD_META(NAME)			\
++		DST = strtoul(ret.addr, NULL, 10);
++
++#define XRESOURCE_LOAD_FLOAT(NAME, DST)		\
++	XRESOURCE_LOAD_META(NAME)		\
++		DST = strtof(ret.addr, NULL);
++
++void
++xrdb_load(void)
 +{
-+	char **sdst = dst;
-+	int *idst = dst;
-+	float *fdst = dst;
-+
-+	char fullname[256];
-+	char fullclass[256];
++	/* XXX */
++	char *xrm;
 +	char *type;
++ 	XrmDatabase xrdb;
 +	XrmValue ret;
++ 	Display *dpy;
 +
-+	snprintf(fullname, sizeof(fullname), "%s.%s",
-+			opt_name ? opt_name : "st", name);
-+	snprintf(fullclass, sizeof(fullclass), "%s.%s",
-+			opt_class ? opt_class : "St", name);
-+	fullname[sizeof(fullname) - 1] = fullclass[sizeof(fullclass) - 1] = '\0';
++	if(!(dpy = XOpenDisplay(NULL)))
++		die("Can't open display\n");
++	XrmInitialize();
++	xrm = XResourceManagerString(dpy);
 +
-+	XrmGetResource(db, fullname, fullclass, &type, &ret);
-+	if (ret.addr == NULL || strncmp("String", type, 64))
-+		return 1;
++	if (xrm != NULL) {
++		xrdb = XrmGetStringDatabase(xrm);
 +
-+	switch (rtype) {
-+	case STRING:
-+		*sdst = ret.addr;
-+		break;
-+	case INTEGER:
-+		*idst = strtoul(ret.addr, NULL, 10);
-+		break;
-+	case FLOAT:
-+		*fdst = strtof(ret.addr, NULL);
-+		break;
++		/* handling colors here without macros to do via loop. */
++		int i = 0;
++		char loadValue[12] = "";
++		for (i = 0; i < 256; i++)
++		{
++			sprintf(loadValue, "%s%d", "st.color", i);
++
++			if(!XrmGetResource(xrdb, loadValue, loadValue, &type, &ret))
++			{
++				sprintf(loadValue, "%s%d", "*.color", i);
++				if (!XrmGetResource(xrdb, loadValue, loadValue, &type, &ret))
++					/* reset if not found (unless in range for defaults). */
++					if (i > 15)
++						colorname[i] = NULL;
++			}
++			if (ret.addr != NULL && !strncmp("String", type, 64))
++				colorname[i] = ret.addr;
++		}
++
++		XRESOURCE_LOAD_STRING("foreground", colorname[defaultfg]);
++		XRESOURCE_LOAD_STRING("background", colorname[defaultbg]);
++		XRESOURCE_LOAD_STRING("cursorfg", colorname[defaultcs])
++		else {
++		  // this looks confusing because we are chaining off of the if
++		  // in the macro. probably we should be wrapping everything blocks
++		  // so this isn't possible...
++		  defaultcs = defaultfg;
++		}
++		XRESOURCE_LOAD_STRING("cursorbg", colorname[defaultrcs])
++		else {
++		  // see above.
++		  defaultrcs = defaultbg;
++		}
++
++		XRESOURCE_LOAD_STRING("font", font);
++		XRESOURCE_LOAD_STRING("termname", termname);
++
++		XRESOURCE_LOAD_INTEGER("blinktimeout", blinktimeout);
++		XRESOURCE_LOAD_INTEGER("borderpx", borderpx);
++		XRESOURCE_LOAD_INTEGER("cursorshape", cursorshape);
++
++		cursorblinkstate = 1; // in case if cursor shape was changed from a blinking one to a non-blinking
++		XRESOURCE_LOAD_INTEGER("cursorthickness", cursorthickness);
++
++		XRESOURCE_LOAD_FLOAT("cwscale", cwscale);
++		XRESOURCE_LOAD_FLOAT("chscale", chscale);
++		XRESOURCE_LOAD_FLOAT("alpha", alpha);
 +	}
-+	return 0;
++	XFlush(dpy);
 +}
 +
 +void
-+config_init(void)
++reload(int sig)
 +{
-+	char *resm;
-+	XrmDatabase db;
-+	ResourcePref *p;
++	xrdb_load();
 +
-+	XrmInitialize();
-+	resm = XResourceManagerString(xw.dpy);
-+	if (!resm)
-+		return;
++	/* colors, fonts */
++	xloadcols();
++	xunloadfonts();
++	xloadfonts(getusedfont(), 0);
++	xloadsparefonts();
++	xsetcursor(cursorshape);
++	if (sig != -1) {
++		/* pretend the window just got resized */
++		cresize(win.w, win.h);
++		redraw();
++		/* triggers re-render if we're visible. */
++		ttywrite("\033[O", 3, 1);
++	}
 +
-+	db = XrmGetStringDatabase(resm);
-+	for (p = resources; p < resources + LEN(resources); p++)
-+		resource_load(db, p->name, p->type, p->dst);
++	signal(SIGUSR1, reload);
 +}
- 
++
++enum motif_wm {
++	MWM_HINTS_FUNCTIONS	= (1L << 0),
++	MWM_HINTS_DECORATIONS	= (1L << 1),
++	MWM_FUNC_ALL		= (1L << 0),
++	MWM_FUNC_RESIZE		= (1L << 1),
++	MWM_FUNC_MOVE		= (1L << 2),
++	MWM_FUNC_MINIMIZE	= (1L << 3),
++	MWM_FUNC_MAXIMIZE	= (1L << 4),
++	MMW_FUNC_CLOSE		= (1L << 5),
++};
++
++/* Motif Window hints */
++typedef struct {
++	unsigned long	flags;
++	unsigned long	functions;
++	unsigned long	decorations;
++	unsigned long	status;
++	long		input_mode;
++} Mwm_hints;
++
++void
++removewindecorations(void)
++{
++	Mwm_hints	hints;
++	Atom		mwm_hints_property;
++
++	mwm_hints_property = XInternAtom(xw.dpy, "_MOTIF_WM_HINTS", 0);
++	hints.flags = MWM_HINTS_DECORATIONS;
++	hints.decorations = 0;
++	XChangeProperty(xw.dpy, xw.win, mwm_hints_property, mwm_hints_property, 32, PropModeReplace,
++			(uchar *)&hints, 5);
++}
++
  void
  usage(void)
-@@ -2051,6 +2115,11 @@ run:
+ {
+@@ -2051,12 +2225,18 @@ run:
  
  	setlocale(LC_CTYPE, "");
  	XSetLocaleModifiers("");
@@ -117,7 +334,14 @@ index 120e495..29e84e5 100644
 +	if(!(xw.dpy = XOpenDisplay(NULL)))
 +		die("Can't open display\n");
 +
-+	config_init();
++	/* config_init(); */
  	cols = MAX(cols, 1);
  	rows = MAX(rows, 1);
  	tnew(cols, rows);
+ 	xinit(cols, rows);
+ 	xsetenv();
+ 	selinit();
++	reload(-1);
+ 	run();
+ 
+ 	return 0;

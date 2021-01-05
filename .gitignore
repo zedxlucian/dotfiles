@@ -15,3 +15,4 @@ config/.config/nvim/plugged/vim-airline/
 config/.config/nvim/plugged/vim-commentary/
 config/.config/nvim/plugged/vim-hexokinase/
 config/.config/nvim/plugged/vim-surround/
+/config/.config/nvim/plugged/

@@ -26,16 +26,16 @@ export DISPLAY=":0.0"
 # FZF ENV
 export FZF_DEFAULT_COMMAND="fd -H . '/etc' $HOME '/usr'"
 export FZF_DEFAULT_OPTS="--layout=reverse --height 40%"
-export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
---color fg:#D8DEE9,bg:#2E3440,hl:#A3BE8C,fg+:#D8DEE9,bg+:#434C5E,hl+:#A3BE8C
---color pointer:#BF616A,info:#4C566A,spinner:#4C566A,header:#4C566A,prompt:#81A1C1,marker:#EBCB8B
-'
+# export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+# --color fg:#D8DEE9,bg:#2E3440,hl:#A3BE8C,fg+:#D8DEE9,bg+:#434C5E,hl+:#A3BE8C
+# --color pointer:#BF616A,info:#4C566A,spinner:#4C566A,header:#4C566A,prompt:#81A1C1,marker:#EBCB8B
+# '
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200' --select-1 --exit-0"
 
 # Fontpreview ENV
 export FONTPREVIEW_FONT_SIZE=14
-export FONTPREVIEW_BG_COLOR="#282A36"
-export FONTPREVIEW_FG_COLOR="#F8F8F2"
+# export FONTPREVIEW_BG_COLOR="#282A36"
+# export FONTPREVIEW_FG_COLOR="#F8F8F2"
 
 # Export XDG environmental variables from '~/.config/user-dirs.dirs'
 eval "$(sed 's/^[^#].*/export &/g;t;d' ${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs)"
