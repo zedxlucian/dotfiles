@@ -11,7 +11,7 @@ export TERMINAL="st"
 export BROWSER="firefox"
 export PRINTER="deskjet"
 export TIME_STYLE="+%d-%m-%Y %H:%M:%S"
-
+export COLORTERM="truecolor"
 # ~/ Clean-up:
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"

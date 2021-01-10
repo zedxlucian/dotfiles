@@ -18,25 +18,23 @@ st.chscale: 1.05
 
 
 /* ! Dracula Xresources palette */
-*.color0:     #000000
-*.color1:     #FF5555
-*.color2:     #50FA7B
-*.color3:     #F1FA8C
-*.color4:     #BD93F9
-*.color5:     #FF79C6
-*.color6:     #8BE9FD
-*.color7:     #BFBFBF
+*.color0: #000000
+*.color1: #b5407b
+*.color2: #7bb540
+*.color3: #b57b40
+*.color4: #407bb5
+*.color5: #7b40b5
+*.color6: #40b57b
+*.color7: #f8f8f8
 
-*.color8:     #4D4D4D
-*.color9:     #FF6E67
-*.color10:    #5AF78E
-*.color11:    #F4F99D
-*.color12:    #CAA9FA
-*.color13:    #FF92D0
-*.color14:    #9AEDFE
-*.color15:    #E6E6E6
-
-*.foreground: #f8f8f2
+*.color8: #737373
+*.color9: #cd73a0
+*.color10: #a0cd73
+*.color11: #cda073
+*.color12: #73a0cd
+*.color13: #a073cd
+*.color14: #73cda0
+*.color15: #ffffff
 
 dwm.topbar: 1
 dwm.borderpx: 2
@@ -48,11 +46,12 @@ dmenu.borderpx: 2
 DARK_MODE="
 /* DARK MODE */
 dwm.normbgcolor: #000000
+dwm.normfgcolor: #ffab91
 dwm.normbordercolor: #000000
-dwm.normfgcolor: #ffffff
+
 dwm.selfgcolor: #000000
-dwm.selbordercolor: #ababab
-dwm.selbgcolor: #ffffff
+dwm.selbgcolor: #ffab91
+dwm.selbordercolor: #ffab91
 
 dmenu.background: #000000
 dmenu.foreground: #ffffff
@@ -68,18 +67,20 @@ dmenu.highlightselforeground: #005577
 dmenu.outbackground:#ffffff
 dmenu.outforeground:#000000
 
+*.foreground: #ffffff
 *.background: #000000
+st.cursorColor: #ffffff
 "
 
 LIGHT_MODE="
 /* LIGHT MODE */
 dwm.normbgcolor: #ffffff
-dwm.normfgcolor: #000000
-dwm.normbordercolor: #000000
+dwm.normfgcolor: #ffab91
+dwm.normbordercolor: #e0e0e0
 
-dwm.selbgcolor: #000000
-dwm.selfgcolor: #ffffff
-dwm.selbordercolor: #ffffff
+dwm.selbgcolor: #e0e0e0
+dwm.selfgcolor: #ffab91
+dwm.selbordercolor: #ffab91
 
 dmenu.background: #ffffff
 dmenu.foreground: #000000
@@ -95,7 +96,9 @@ dmenu.highlightselforeground:#FF92D0
 dmenu.outbackground:#ffffff
 dmenu.outforeground:#000000
 
-*.background: #282a36
+*.foreground: #000000
+*.background: #ffffff
+st.cursorColor: #000000
 "
 
 if [ -f $1 ]
