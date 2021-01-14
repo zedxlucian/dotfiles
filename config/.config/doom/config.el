@@ -1,7 +1,7 @@
-(setq doom-font (font-spec :family "monospace" :size 16)
+(setq doom-font (font-spec :family "monospace" :size 14 :adstyle "Light")
       doom-variable-pitch-font (font-spec :family "sans"))
 
-(setq doom-theme 'doom-one-light)
+(setq doom-theme 'doom-nord)
 
 (setq display-line-numbers-type 'relative)
 
@@ -41,3 +41,5 @@
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
+
+(add-hook! dired-mode 'dired-hide-details-mode)

@@ -12,7 +12,7 @@ index 05d5a3e..0c84121 100644
  # flags
  CPPFLAGS = -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_XOPEN_SOURCE=700 -D_POSIX_C_SOURCE=200809L -DVERSION=\"$(VERSION)\" $(XINERAMAFLAGS)
 diff --git a/dmenu.c b/dmenu.c
-index 65f25ce..a653763 100644
+index 65f25ce..4f6b812 100644
 --- a/dmenu.c
 +++ b/dmenu.c
 @@ -1,6 +1,7 @@
@@ -133,7 +133,7 @@ index 65f25ce..a653763 100644
 -		else if (!strcmp(argv[i], "-i")) { /* case-insensitive item matching */
 -			fstrncmp = strncasecmp;
 -			fstrstr = cistrstr;
-+		else if (!strcmp(argv[i], "-F"))   /* grabs keyboard before reading stdin */
++		else if (!strcmp(argv[i], "-F"))   /* non-fuzzy matching */
 +			fuzzy = 0;
 +		else if (!strcmp(argv[i], "-s")) { /* case-sensitive item matching */
 +			fstrncmp = strncmp;

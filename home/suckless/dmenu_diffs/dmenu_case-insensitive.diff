@@ -1,5 +1,5 @@
 diff --git a/dmenu.c b/dmenu.c
-index 65f25ce..d13395a 100644
+index 65f25ce..41d8d5e 100644
 --- a/dmenu.c
 +++ b/dmenu.c
 @@ -55,8 +55,9 @@ static Clr *scheme[SchemeLast];
@@ -21,7 +21,7 @@ index 65f25ce..d13395a 100644
 -		else if (!strcmp(argv[i], "-i")) { /* case-insensitive item matching */
 -			fstrncmp = strncasecmp;
 -			fstrstr = cistrstr;
-+		else if (!strcmp(argv[i], "-F"))   /* grabs keyboard before reading stdin */
++		else if (!strcmp(argv[i], "-F"))   /* non-fuzzy matching */
 +			fuzzy = 0;
 +		else if (!strcmp(argv[i], "-s")) { /* case-sensitive item matching */
 +			fstrncmp = strncmp;

@@ -8,33 +8,11 @@ Xft.hintstyle: hintslight
 Xft.dpi: 91
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
-/* DMENU */
-dmenu.font:SFMono Nerd Font Mono:style=Regular:size=12:antialias=true:autohint=true
 
 /* ST */
-st.font:SFMono Nerd Font Mono:style=Regular:size=10:antialias=true:autohint=true
-st.cwscale: 1.00
-st.chscale: 1.05
-
-
-/* ! Dracula Xresources palette */
-*.color0: #000000
-*.color1: #b5407b
-*.color2: #7bb540
-*.color3: #b57b40
-*.color4: #407bb5
-*.color5: #7b40b5
-*.color6: #40b57b
-*.color7: #f8f8f8
-
-*.color8: #737373
-*.color9: #cd73a0
-*.color10: #a0cd73
-*.color11: #cda073
-*.color12: #73a0cd
-*.color13: #a073cd
-*.color14: #73cda0
-*.color15: #ffffff
+st.cwscale: 1.0
+st.chscale: 1.0
+st.alpha: 1.0
 
 dwm.topbar: 1
 dwm.borderpx: 2
@@ -45,143 +23,112 @@ dmenu.borderpx: 2
 
 DARK_MODE="
 /* DARK MODE */
-dwm.normbgcolor: #000000
-dwm.normfgcolor: #ffab91
-dwm.normbordercolor: #000000
+#include \"themes/nord-dark\"
+dwm.normbgcolor: nord1
+dwm.normfgcolor: nord6
+dwm.normbordercolor: nord1
 
-dwm.selfgcolor: #000000
-dwm.selbgcolor: #ffab91
-dwm.selbordercolor: #ffab91
+dwm.selfgcolor: nord1
+dwm.selbgcolor: nord6
+dwm.selbordercolor: nord6
 
-dmenu.background: #000000
-dmenu.foreground: #ffffff
-dmenu.selbackground: #ffffff
-dmenu.selforeground:#000000
+dmenu.background: nord1
+dmenu.foreground: nord6
+dmenu.selbackground: nord6
+dmenu.selforeground: nord1
 
-dmenu.highlightbackground: #000000
-dmenu.higlightselbackground: #ffffff
+dmenu.highlightbackground: nord6
+dmenu.higlightselbackground: nord6
 
-dmenu.highlightforeground: #FF92D0
-dmenu.highlightselforeground: #005577
-
-dmenu.outbackground:#ffffff
-dmenu.outforeground:#000000
-
-*.foreground: #ffffff
-*.background: #000000
-st.cursorColor: #ffffff
+dmenu.highlightforeground: nord14
+dmenu.highlightselforeground: nord14
 "
 
 LIGHT_MODE="
 /* LIGHT MODE */
-dwm.normbgcolor: #ffffff
-dwm.normfgcolor: #ffab91
-dwm.normbordercolor: #e0e0e0
+#include \"themes/nord-light\"
+dwm.normbgcolor: nord1
+dwm.normfgcolor: nord6
+dwm.normbordercolor: nord1
 
-dwm.selbgcolor: #e0e0e0
-dwm.selfgcolor: #ffab91
-dwm.selbordercolor: #ffab91
+dwm.selfgcolor: nord1
+dwm.selbgcolor: nord6
+dwm.selbordercolor: nord6
 
-dmenu.background: #ffffff
-dmenu.foreground: #000000
-dmenu.selbackground: #000000
-dmenu.selforeground:#ffffff
+dmenu.background: nord1
+dmenu.foreground: nord6
+dmenu.selbackground: nord6
+dmenu.selforeground: nord1
 
-dmenu.highlightbackground: #ffffff
-dmenu.higlightselbackground: #000000
+dmenu.highlightbackground: nord6
+dmenu.higlightselbackground: nord6
 
-dmenu.highlightforeground: #005577
-dmenu.highlightselforeground:#FF92D0
-
-dmenu.outbackground:#ffffff
-dmenu.outforeground:#000000
-
-*.foreground: #000000
-*.background: #ffffff
-st.cursorColor: #000000
+dmenu.highlightforeground: nord14
+dmenu.highlightselforeground: nord14
 "
 
-if [ -f $1 ]
-then
-
-	PROMPT="$(echo -e "Light\nDark" | dmenu -p "Change mode to:")"
-
-	if [ "$PROMPT" = "Light" ]
-	then
+if [ -f "$1" ]; then
+	PROMPT="$(printf "Light\\nDark" | dmenu -p "Change mode to:")"
+	if [ "$PROMPT" = "Light" ]; then
 		CHOOSED_CONFIG+="$ALWAYS $LIGHT_MODE"
-		echo "$CHOOSED_CONFIG" > $HOME/.config/X11/Xresources &&
-		xrdb -merge $HOME/.config/X11/Xresources &&
+		echo "$CHOOSED_CONFIG" > "$HOME/.config/X11/Xresources" &&
+		xrdb -merge "$HOME/.config/X11/Xresources" &&
 		dwmc reload &&
 		kill -s USR1 $(pidof st)
-
 		if ls /tmp/nvimsocket-* 1> /dev/null 2>&1; then
-			cmdvim "AirlineTheme sol"
+			cmdvim "AirlineTheme ayu_light"
 		fi
-
-		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"sol"/' $HOME/.config/nvim/init.vim
-
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc"/' $HOME/.config/gtk-2.0/gtkrc-2.0
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"WhiteSur-light"/' $HOME/.config/gtk-3.0/settings.ini
+		emacsclient -e "(load-theme 'doom-nord-light 'no-confirm)"
+		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"ayu_light"/' "$HOME/.config/nvim/init.vim"
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"WhiteSur-light"/' "$HOME/.config/gtk-3.0/settings.ini"
 		genzathurarc > ~/.config/zathura/zathurarc
-
-	elif [ "$PROMPT" = "Dark" ]
-	then
+	elif [ "$PROMPT" = "Dark" ]; then
 		CHOOSED_CONFIG+="$ALWAYS $DARK_MODE"
-		echo "$CHOOSED_CONFIG" > $HOME/.config/X11/Xresources &&
-		xrdb -merge $HOME/.config/X11/Xresources &&
+		echo "$CHOOSED_CONFIG" > "$HOME/.config/X11/Xresources" &&
+		xrdb -merge "$HOME/.config/X11/Xresources" &&
 		dwmc reload &&
 		kill -s USR1 $(pidof st)
-
 		if ls /tmp/nvimsocket-* 1> /dev/null 2>&1; then
-			cmdvim "AirlineTheme minimalist"
+			cmdvim "AirlineTheme ayu_dark"
 		fi
-
-		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"minimalist"/' $HOME/.config/nvim/init.vim
-
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Shades-of-gray"/' $HOME/.config/gtk-2.0/gtkrc-2.0
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Whitesur-dark"/' $HOME/.config/gtk-3.0/settings.ini
+		emacsclient -e "(load-theme 'doom-nord 'no-confirm)"
+		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"ayu_dark"/' "$HOME/.config/nvim/init.vim"
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Shades-of-gray"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Whitesur-dark"/' "$HOME/.config/gtk-3.0/settings.ini"
 		genzathurarc > ~/.config/zathura/zathurarc
-
 	fi
-
 else
-
-	if [ "$1" = "Light" -o "$1" = "light" ] ; then
+	if [ "$1" = "Light" ] || [ "$1" = "light" ]; then
 		CHOOSED_CONFIG+="$ALWAYS $LIGHT_MODE"
-		echo "$CHOOSED_CONFIG" > $HOME/.config/X11/Xresources &&
-		xrdb -merge $HOME/.config/X11/Xresources &&
+		echo "$CHOOSED_CONFIG" > "$HOME/.config/X11/Xresources" &&
+		xrdb -merge "$HOME/.config/X11/Xresources" &&
 		dwmc reload &&
 		kill -s USR1 $(pidof st)
-
 		if ls /tmp/nvimsocket-* 1> /dev/null 2>&1; then
-			cmdvim "AirlineTheme sol"
+			cmdvim "AirlineTheme ayu_light"
 		fi
-
-		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"sol"/' $HOME/.config/nvim/init.vim
-
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc"/' $HOME/.config/gtk-2.0/gtkrc-2.0
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Whitesur-light"/' $HOME/.config/gtk-3.0/settings.ini
+		emacsclient -e "(load-theme 'doom-nord-light 'no-confirm)"
+		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"ayu_light"/' "$HOME/.config/nvim/init.vim"
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"WhiteSur-light"/' "$HOME/.config/gtk-3.0/settings.ini"
 		genzathurarc > ~/.config/zathura/zathurarc
-
-	elif [ "$1" = "Dark" -o "$1" = "dark" ] ; then
+	elif [ "$1" = "Dark" ] || [ "$1" = "dark" ]; then
 		CHOOSED_CONFIG+="$ALWAYS $DARK_MODE"
-		echo "$CHOOSED_CONFIG" > $HOME/.config/X11/Xresources &&
-		xrdb -merge $HOME/.config/X11/Xresources &&
+		echo "$CHOOSED_CONFIG" > "$HOME/.config/X11/Xresources" &&
+		xrdb -merge "$HOME/.config/X11/Xresources" &&
 		dwmc reload &&
 		kill -s USR1 $(pidof st)
-
 		if ls /tmp/nvimsocket-* 1> /dev/null 2>&1; then
-			cmdvim "AirlineTheme minimalist"
+			cmdvim "AirlineTheme ayu_dark"
 		fi
-
-		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"minimalist"/' $HOME/.config/nvim/init.vim
-
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Shades-of-gray"/' $HOME/.config/gtk-2.0/gtkrc-2.0
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Whitesur-dark"/' $HOME/.config/gtk-3.0/settings.ini
+		emacsclient -e "(load-theme 'doom-nord 'no-confirm)"
+		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"ayu_dark"/' "$HOME/.config/nvim/init.vim"
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Shades-of-gray"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Whitesur-dark"/' "$HOME/.config/gtk-3.0/settings.ini"
 		genzathurarc > ~/.config/zathura/zathurarc
-
-	elif [ "$1" = "toggle" -o "$1" = "Toggle" ] ; then
-		if grep -q "DARK MODE" $HOME/.config/X11/Xresources
+	elif [ "$1" = "toggle" ] || [ "$1" = "Toggle" ]; then
+		if grep -q "DARK MODE" "$HOME/.config/X11/Xresources"
 		then
 			change_mode light
 		else

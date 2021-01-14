@@ -8,13 +8,13 @@ ramp2=
 ramp3=
 
 if [[ $mute == "true" ]]; then
-    echo " $iconmute mute"
+    echo " $iconmute mute"
 elif [[ "$vol" -ge "100" ]]; then
-    echo "$ramp3 $vol%"
+    echo "$ramp3 $vol%"
 elif [[ "$vol" -le "33" ]]; then
-    echo "$ramp1 $vol%"
+    echo "$ramp1 $vol%"
 elif [[ "$vol" -le "66" ]]; then
-    echo "$ramp2 $vol%"
+    echo "$ramp2 $vol%"
 elif [[ "$vol" -ge "66" ]]; then
-    echo "$ramp3 $vol%"
+    echo "$ramp3 $vol%"
 fi

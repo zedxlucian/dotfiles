@@ -9,7 +9,7 @@ alias \
 	mkd="mkdir -pv" \
 
 # Changing "ls" to "exa"
-alias ls='exa -l --color=always --group-directories-first --time-style=default' # my preferred listing
+alias ls='exa -x --color=always --group-directories-first --time-style=default' # my preferred listing
 alias la='exa -a --color=always --group-directories-first --time-style=default'  # all files and dirs
 alias ll='exa -al --color=always --group-directories-first --time-style=default'  # long format
 alias lt='exa -aT --color=always --group-directories-first --time-style=default' # tree listing
@@ -40,5 +40,3 @@ alias \
 # Some other stuff
 alias \
 	mbsync="mbsync -c $XDG_CONFIG_HOME/isync/mbsyncrc" \
-	em="TERM=st-direct emacsclient -nw" \
-    emacs="emacsclient -c -a 'emacs'"

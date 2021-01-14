@@ -357,7 +357,7 @@ index 3d351b6..27339b3 100644
  void tresize(int, int);
  void tsetdirtattr(int);
 diff --git a/x.c b/x.c
-index 120e495..84f2ec7 100644
+index 120e495..a99ed22 100644
 --- a/x.c
 +++ b/x.c
 @@ -34,6 +34,7 @@ typedef struct {
@@ -368,7 +368,15 @@ index 120e495..84f2ec7 100644
  } MouseShortcut;
  
  typedef struct {
-@@ -446,6 +447,7 @@ mouseaction(XEvent *e, uint release)
+@@ -439,13 +440,14 @@ int
+ mouseaction(XEvent *e, uint release)
+ {
+ 	MouseShortcut *ms;
+-
++	MouseKey *mk;
+ 	/* ignore Button<N>mask for Button<N> - it's set on release */
+ 	uint state = e->xbutton.state & ~buttonmask(e->xbutton.button);
+ 
  	for (ms = mshortcuts; ms < mshortcuts + LEN(mshortcuts); ms++) {
  		if (ms->release == release &&
  		    ms->button == e->xbutton.button &&

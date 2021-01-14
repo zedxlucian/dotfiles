@@ -14,7 +14,7 @@ rebase_make() {
     create_diff &&
     git branch custom && git checkout custom &&
     for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
-        if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
+        if [ "$branch" != "upstream/master" ] && [ "$branch" != "custom" ];then
             echo $branch
             git rebase --rebase-merges $branch
         fi
@@ -28,7 +28,7 @@ rebase_make_install() {
     create_diff &&
     git branch custom && git checkout custom &&
     for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
-        if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
+        if [ "$branch" != "upstream/master" ] && [ "$branch" != "custom" ];then
             echo $branch
             git rebase --rebase-merges $branch
         fi
@@ -42,7 +42,7 @@ create_diff() {
     rm -rf "$OLD_DIFF_DIR" > /dev/null 2>&1 && mkdir -p "$OLD_DIFF_DIR" && mkdir -p "$DIFF_DIR" && mv "$DIFF_DIR"*.diff "$OLD_DIFF_DIR" > /dev/null 2>&1 || true &&
     clean_reset &&
     for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
-        if [ "$branch" != "master" ];then
+        if [ "$branch" != "upstream/master" ];then
             git diff master..$branch > "${DIFF_DIR}/${PROJECT_NAME}_${branch}.diff"
         fi
     done
@@ -85,7 +85,7 @@ Options:
 clean_reset() {
     git checkout master &&
     make clean &&
-    rm -f config.h && git reset --hard origin/master
+    rm -f config.h && git reset --hard upstream/master
 }
 
 skip=false

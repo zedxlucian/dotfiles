@@ -1,6 +1,6 @@
 #!/bin/sh
 
-icon=
+icon=
 
 if ! updates=$(checkupdates+aur 2> /dev/null | wc -l ); then
     updates=0
@@ -8,4 +8,4 @@ fi
 
 echo $updates > ~/.cache/pacman_updates
 
-echo "$icon $(cat ~/.cache/pacman_updates)"
+echo "$icon $(cat ~/.cache/pacman_updates)"

@@ -17,9 +17,10 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'Yggdroot/indentLine'
+Plug 'arcticicestudio/nord-vim'
 call plug#end()
 
-set guicursor=n-v-c-sm:block,i-ci-ve:ver25-Cursor,r-cr-o:hor20
+colorscheme nord
 set go=a
 set mouse=a
 set nohlsearch

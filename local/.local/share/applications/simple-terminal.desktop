@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+TryExec=st
+Exec=jumpapp st
+Icon=terminal
+Terminal=false
+Categories=System;TerminalEmulator;
+
+Name=Simple Terminal (Jump)
+GenericName=Terminal
+Comment=Suckless's Simple Terminal emulator

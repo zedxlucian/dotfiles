@@ -1,7 +1,0 @@
-#!/bin/sh
-
-cmdDate=$(date '+%A %d %B')
-cmdTime=$(date '+%H:%M')
-iconDate=
-iconTime=
-echo "$iconDate $cmdDate $iconTime $cmdTime" 
