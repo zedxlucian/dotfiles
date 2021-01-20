@@ -1,0 +1,222 @@
+#!/usr/bin/env bash
+
+### OPTIONS AND VARIABLES ###
+
+DOTFILESREPO="https://github.com/zedxlucian/dotfiles.git"
+AURHELPER="yay"
+REPOBRANCH="master"
+PACKAGES="/home/lydien/.local/bin/packages"
+
+# Sucklesspatch function variables
+DOTFILES="$HOME/.local/src/suckless"
+PROJECT_NAME="$(basename $(pwd))"
+DIFF_DIR="${DOTFILES}/${PROJECT_NAME}_diffs"
+OLD_DIFF_DIR="${DOTFILES}/${PROJECT_NAME}_diffs/old"
+
+### FUNCTIONS ###
+
+installpkg() { pacman --noconfirm --needed -S "$1" >/dev/null 2>&1 ;}
+
+error() { clear; printf "ERROR:\\n%s\\n" "$1"; exit 1;}
+
+
+gitconfig () { \
+	sudo -u lydien git config --global user.email "s.lydien@icloud.com"
+	sudo -u lydien git config --global user.name "Lydien Sandanasamy" ;}
+
+refreshkeys() { \
+	pacman --noconfirm -Sy archlinux-keyring >/dev/null 2>&1
+	}
+
+newperms() { # Set special sudoers settings for install (or after).
+	sed -i "/#LARBS/d" /etc/sudoers
+	echo "$* #LARBS" >> /etc/sudoers ;}
+
+manualinstall() { # Installs $1 manually if not installed. Used only for AUR helper here.
+	[ -f "/usr/bin/$1" ] || (
+	cd /tmp || exit
+	rm -rf /tmp/"$1"*
+	curl -sO https://aur.archlinux.org/cgit/aur.git/snapshot/"$1".tar.gz &&
+	sudo -u "lydien" tar -xvf "$1".tar.gz >/dev/null 2>&1 &&
+	cd "$1" &&
+	sudo -u "lydien" makepkg --noconfirm -si >/dev/null 2>&1
+cd /tmp || return) ;}
+
+maininstall() { # Installs all needed programs from main repo.
+	installpkg "$1"
+	}
+
+gitmakeinstall() {
+	progname="$(basename "$1" .git)"
+	repodir="/home/lydien/.local/src"; mkdir -p "$repodir"; chown -R lydien:wheel "$(dirname "$repodir")"
+	dir="$repodir/$progname"
+	sudo -u "lydien" git clone --depth 1 "$1" "$dir" >/dev/null 2>&1 || { cd "$dir" || return ; sudo -u "lydien" git pull --force origin master;}
+	cd "$dir" || exit 1
+	make >/dev/null 2>&1
+	make install >/dev/null 2>&1
+	cd /tmp || return ;}
+
+aurinstall() { \
+	echo "$aurinstalled" | grep "^$1$" >/dev/null 2>&1 && return
+	sudo -u "lydien" $AURHELPER -S --noconfirm "$1" >/dev/null 2>&1
+	}
+
+pipinstall() { \
+	command -v pip || installpkg python-pip >/dev/null 2>&1
+	yes | pip install "$1"
+	}
+
+installationloop() { \
+	aurinstalled=$(pacman -Qqm)
+	while IFS=, read -r tag program ; do
+		case "$tag" in
+			"A") aurinstall "$program" ;;
+			"G") gitmakeinstall "$program" ;;
+			"P") pipinstall "$program" ;;
+			  *) maininstall "$program" ;;
+		esac
+	done < "$PACKAGES" ;}
+
+stowinstall() { 
+    branch="$REPOBRANCH"
+	dir=$(echo "$DOTFILESREPO" | cut -d. -f2 | sed "s/.*\//\/home\/lydien\//")
+	sudo -u "lydien" git clone --recursive -b "$branch" --depth 1 "$1" "$dir" >/dev/null 2>&1
+	sudo -u "lydien" mkdir -p "/home/lydien"/{.config,.local/{src,bin/{statusbar,newsboat},share/{xorg,gnupg}}} >/dev/null 2>&1
+	cd "$dir" >/dev/null 2>&1 || exit
+	sudo -u "lydien" stow -t "/home/lydien/" config home local >/dev/null 2>&1 || exit
+	chown -R "lydien":wheel "$dir" >/dev/null 2>&1 ;}
+
+systembeepoff() {
+	rmmod pcspkr
+	echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf ;}
+
+sucklesspatch(){
+    [ ! -d "$DIFF_DIR" ] && echo "No patches" ; exit 1 ||
+	dir="$(ls "$DIFF_DIR")"
+    for i in "$dir"/*.diff; do
+        name=$(echo "$i" | sed -e 's/\/.*\///' -e 's/\.diff//' -e "s/${PROJECT_NAME}_//")
+        echo "Checking out master"
+        sudo -u lydien git checkout master > /dev/null 2>&1 &&
+        echo "Creating branch $name"
+        sudo -u lydien git branch "$name" > /dev/null 2>&1 &&
+        echo "Checking out $name"
+        sudo -u lydien git checkout "$name" > /dev/null 2>&1 &&
+        echo "Applying patch : $name"
+        sudo -u lydien git apply "$i" > /dev/null 2>&1 &&
+        echo "Adding and commiting"
+        sudo -u lydien git add -A && sudo -u lydien git commit -m "Feature: Add $name patch" > /dev/null 2>&1
+    done
+    printf "\n" &&
+    sudo -u lydien git checkout master &&
+    sudo -u lydien make clean &&
+    sudo -u lydien rm -f config.h && sudo -u lydien git reset --hard master
+}
+
+rebasemakeinstall() {
+    sudo -u lydien git checkout master &&
+    sudo -u lydien make clean &&
+    sudo -u lydien rm -f config.h && sudo -u lydien git reset --hard master
+    sudo -u lydien git branch custom && sudo -u lydien git checkout custom &&
+    for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
+        if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
+            echo "$branch"
+            sudo -u lydien git rebase --rebase-merges $branch
+        fi
+    done
+    sudo -u lydien make && make install &&
+    sudo -u lydien git checkout master && sudo -u lydien git branch -D custom
+}
+
+creatediff() {
+    sudo -u lydien rm -rf "$OLD_DIFF_DIR" > /dev/null 2>&1 && sudo -u lydien mkdir -p "$OLD_DIFF_DIR" && sudo -u lydien mkdir -p "$DIFF_DIR" && sudo -u lydien mv "$DIFF_DIR"*.diff "$OLD_DIFF_DIR" > /dev/null 2>&1 || true &&
+    sudo -u lydien git checkout master &&
+    sudo -u lydien make clean &&
+    sudo -u lydien rm -f config.h && sudo -u lydien git reset --hard master
+    for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
+        if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
+            sudo -u lydien git diff master.."$branch" > "${DIFF_DIR}/${PROJECT_NAME}_${branch}.diff"
+        fi
+    done
+}
+
+### THE ACTUAL SCRIPT ###
+
+### This is how everything happens in an intuitive format and order.
+
+# Check if user is root on Arch distro.
+[ $EUID -ne 0 ] || error "This script must be run as root"
+
+# Refresh Arch keyrings.
+refreshkeys || error "Error automatically refreshing Arch keyring. Consider doing so manually."
+
+installpkg curl
+installpkg base-devel
+installpkg git
+installpkg ntp
+installpkg stow
+
+ntpdate 0.us.pool.ntp.org >/dev/null 2>&1
+
+[ -f /etc/sudoers.pacnew ] && cp /etc/sudoers.pacnew /etc/sudoers # Just in case
+
+# Allow user to run sudo without password. Since AUR programs must be installed
+# in a fakeroot environment, this is required for all builds with AUR.
+newperms "%wheel ALL=(ALL) NOPASSWD: ALL"
+
+# Make pacman and yay colorful and adds eye candy on the progress bar because why not.
+grep "^Color" /etc/pacman.conf >/dev/null || sed -i "s/^#Color$/Color/" /etc/pacman.conf
+grep "ILoveCandy" /etc/pacman.conf >/dev/null || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
+
+# Use all cores for compilation.
+sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
+
+manualinstall $AURHELPER || error "Failed to install AUR helper."
+
+# Adding spotify gpg key to the system as it won't work otherwise // WAITING FOR UPSTREAM FIX
+curl -sS https://download.spotify.com/debian/pubkey_0D811D58.gpg | gpg --import -
+
+# The command that does all the installing. Reads the progs.csv file and
+# installs each needed program the way required. Be sure to run this only after
+# the user has been created and has priviledges to run sudo without a password
+# and all build dependencies are installed.
+installationloop
+
+# Install the dotfiles in the user's home directory
+stowinstall "$DOTFILESREPO" "$REPOBRANCH"
+
+# Setup git config
+gitconfig || error "Could not set git credentials globally"
+
+# Most important command! Get rid of the beep!
+systembeepoff
+
+# Make zsh the default shell for the user.
+chsh -s /bin/zsh "lydien" >/dev/null 2>&1
+sudo -u "lydien" mkdir -p "/home/lydien/.cache/zsh/"
+echo "export ZDOTDIR=/home/lydien/.config/zsh" > /etc/zsh/zshenv
+
+# Use french layout globally and also use terminus-font for TTY.
+printf "KEYMAP=fr\nFONT=ter-122n\n" > /etc/vconsole.conf
+
+# Start/restart PulseAudio.
+killall pulseaudio; sudo -u "lydien" pulseaudio --start
+
+# This line, overwriting the `newperms` command above will allow the user to run
+# serveral important commands, `shutdown`, `reboot`, updating, etc. without a password.
+newperms "%wheel ALL=(ALL) ALL
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount,/usr/bin/umount,/usr/bin/pacman -Syu,/usr/bin/pacman -Syyu,/usr/bin/packer -Syu,/usr/bin/packer -Syyu,/usr/bin/systemctl restart NetworkManager,/usr/bin/rc-service NetworkManager restart,/usr/bin/pacman -Syyu --noconfirm,/usr/bin/loadkeys,/usr/bin/yay,/usr/bin/pacman -Syyuw --noconfirm,/usr/bin/killall,/usr/bin/local/dwmc"
+
+# Install suckless software
+cd /home/lydien/.local/src/dwm/ || error "DWM is not present on the system."
+sucklesspatch
+
+
+cd /home/lydien/.local/src/st/ || error "ST is not present on the system."
+sucklesspatch
+rebasemakeinstall
+
+cd /home/lydien/.local/src/dmenu/ || error "DMENU is not present on the system."
+sucklesspatch
+rebasemakeinstall
+
+clear
