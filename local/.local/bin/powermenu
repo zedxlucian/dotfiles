@@ -4,8 +4,8 @@ cmds="\
 lock		betterlockscreen -l
 leave dwm	kill -TERM $(pgrep -u $USER "\bdwm$")
 renew dwm	kill -HUP $(pgrep -u $USER "\bdwm$")
-reboot	    ${reb:-sudo -A reboot}
-shutdown	${shut:-sudo -A shutdown -h now}"
+reboot	    ${reb:-sudo reboot}
+shutdown	${shut:-sudo shutdown -h now}"
 
 choice="$(echo "$cmds" | cut -d'	' -f 1 | dmenu)" || exit 1
 

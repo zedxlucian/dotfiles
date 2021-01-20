@@ -8,19 +8,15 @@ if ! filereadable(system('echo -n "${XDG_CONFIG_HOME:-$HOME/.config}/nvim/autolo
 endif
 
 call plug#begin(system('echo -n "${XDG_CONFIG_HOME:-$HOME/.config}/nvim/plugged"'))
-Plug 'vim-airline/vim-airline-themes'
 Plug 'tmsvg/pear-tree'
 Plug 'tpope/vim-surround'
-Plug 'bling/vim-airline'
 Plug 'tpope/vim-commentary'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'Yggdroot/indentLine'
-Plug 'arcticicestudio/nord-vim'
 call plug#end()
 
-colorscheme nord
 set go=a
 set mouse=a
 set nohlsearch
@@ -28,12 +24,10 @@ set clipboard+=unnamedplus
 set termguicolors
 
 " Some basics:
-	nnoremap c "_c
 	set nocompatible
 	filetype plugin on
 	syntax on
 	set encoding=utf-8
-	set number relativenumber
 	set hidden
 	set noswapfile
 	set path=.,**
@@ -48,9 +42,6 @@ set termguicolors
 " Disables automatic commenting on newline:
 	autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
-" Spell-check set to <leader>o, 'o' for 'orthography':
-	map <leader>o :setlocal spell! spelllang=en_us<CR>
-
 " Splits open at the bottom and right, which is non-retarded, unlike vim defaults.
 	set splitbelow splitright
 
@@ -60,40 +51,9 @@ set termguicolors
 	map <C-k> <C-w>k
 	map <C-l> <C-w>l
 
-" Replace ex mode with gq
-	map Q gq
-
-" Check file in shellcheck:
-	map <leader>s :!clear && shellcheck %<CR>
-
-" Replace all is aliased to S.
-	nnoremap S :%s//g<Left><Left>
-
-" Compile document, be it groff/LaTeX/markdown/etc.
-	map <leader>c :w! \| !compiler <c-r>%<CR>
-
-" Open corresponding .pdf/.html or preview
-	map <leader>p :!opout <c-r>%<CR><CR>
-
-" Runs a script that cleans out tex build files whenever I close out of a .tex file.
-	autocmd VimLeave *.tex !texclear %
-
-" Save file as sudo on files that require root permission
-	cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
-
 " Automatically deletes all trailing whitespace and newlines at end of file on save.
 	autocmd BufWritePre * %s/\s\+$//e
 	autocmd BufWritepre * %s/\n\+\%$//e
-
-" When shortcut files are updated, renew bash and ranger configs with new material:
-	autocmd BufWritePost files,directories !shortcuts
-" Run xrdb whenever Xdefaults or Xresources are updated.
-	autocmd BufWritePost *Xresources,*Xdefaults !xrdb %
-
-" Turns off highlighting on the bits of code that are changed, so the line that is changed is highlighted but the actual text that has changed stands out on the line and is readable.
-if &diff
-    highlight! link DiffText MatchParen
-endif
 
 " FZF settings
 " This is the default extra key bindings

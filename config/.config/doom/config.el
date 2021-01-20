@@ -33,7 +33,7 @@
       org-journal-encrypt-journal t
       org-journal-file-format "%d%m%Y.org"
       org-startup-folded 'overview
-      org-ellipsis " ▾" )
+      org-ellipsis " ⤵" )
 
 (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●"))
 

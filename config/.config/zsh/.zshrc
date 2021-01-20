@@ -60,3 +60,13 @@ source /usr/share/fzf/key-bindings.zsh
 bindkey '^R' fzf-history-widget
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Install packages using yay
+function in() {
+    yay -Slq | fzf -q "$1" -m --preview 'yay -Si {1}'| xargs -ro yay -S
+}
+
+# Remove installed packages
+function re() {
+    yay -Qq | fzf -q "$1" -m --preview 'yay -Qi {1}' | xargs -ro yay -Rns
+}

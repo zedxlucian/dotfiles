@@ -1,5 +1,5 @@
 diff --git a/dwm.c b/dwm.c
-index 664c527..4b38b5b 100644
+index 664c527..7cd000a 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -40,6 +40,7 @@
@@ -239,7 +239,7 @@ index 664c527..4b38b5b 100644
  	cursor[CurResize] = drw_cur_create(drw, XC_sizing);
  	cursor[CurMove] = drw_cur_create(drw, XC_fleur);
  	/* init appearance */
-@@ -1637,6 +1694,40 @@ sigchld(int unused)
+@@ -1637,6 +1694,42 @@ sigchld(int unused)
  	while (0 < waitpid(-1, NULL, WNOHANG));
  }
  
@@ -277,10 +277,12 @@ index 664c527..4b38b5b 100644
 +    sigqueue(fl.l_pid, SIGRTMIN, sv);
 +}
 +
++#define spawn_cwd_delim " []{}()<>\"':"
++
  void
  spawn(const Arg *arg)
  {
-@@ -1808,7 +1899,7 @@ updatebars(void)
+@@ -1808,7 +1901,7 @@ updatebars(void)
  	XSetWindowAttributes wa = {
  		.override_redirect = True,
  		.background_pixmap = ParentRelative,
@@ -289,7 +291,7 @@ index 664c527..4b38b5b 100644
  	};
  	XClassHint ch = {"dwm", "dwm"};
  	for (m = mons; m; m = m->next) {
-@@ -1850,6 +1941,41 @@ updateclientlist()
+@@ -1850,6 +1943,41 @@ updateclientlist()
  				(unsigned char *) &(c->win), 1);
  }
  
@@ -331,7 +333,7 @@ index 664c527..4b38b5b 100644
  int
  updategeom(void)
  {
-@@ -1990,9 +2116,27 @@ updatesizehints(Client *c)
+@@ -1990,9 +2118,27 @@ updatesizehints(Client *c)
  void
  updatestatus(void)
  {

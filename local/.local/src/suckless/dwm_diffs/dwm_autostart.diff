@@ -1,5 +1,5 @@
 diff --git a/dwm.1 b/dwm.1
-index ddc8321..86e73f9 100644
+index ddc8321f..86e73f91 100644
 --- a/dwm.1
 +++ b/dwm.1
 @@ -30,6 +30,14 @@ top left corner.  The tags which are applied to one or more windows are
@@ -40,7 +40,7 @@ index ddc8321..86e73f9 100644
  dwm is customized by creating a custom config.h and (re)compiling the source
  code. This keeps it fast, secure and simple.
 diff --git a/dwm.c b/dwm.c
-index 664c527..db907b9 100644
+index 664c527f..960fbe3e 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -29,6 +29,7 @@
@@ -59,21 +59,19 @@ index 664c527..db907b9 100644
  static void scan(void);
  static int sendevent(Client *c, Atom proto);
  static void sendmon(Client *c, Monitor *m);
-@@ -236,8 +238,13 @@ static int xerrorstart(Display *dpy, XErrorEvent *ee);
+@@ -236,7 +238,12 @@ static int xerrorstart(Display *dpy, XErrorEvent *ee);
  static void zoom(const Arg *arg);
  
  /* variables */
++static Systray *systray =  NULL;
 +static const char autostartblocksh[] = "autostart_blocking.sh";
 +static const char autostartsh[] = "autostart.sh";
  static const char broken[] = "broken";
--static char stext[256];
 +static const char dwmdir[] = "dwm";
 +static const char localshare[] = ".local/share";
-+static char stextc[STATUSLENGTH];
-+static char stexts[STATUSLENGTH];
+ static char stext[256];
  static int screen;
  static int sw, sh;           /* X display screen geometry width, height */
- static int bh, blw = 0;      /* bar geometry */
 @@ -1381,6 +1388,83 @@ run(void)
  			handler[ev.type](&ev); /* call handler */
  }

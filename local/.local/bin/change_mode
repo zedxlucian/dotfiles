@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ALWAYS="
+XRESOURCES="
 Xft.autohint: 0
 Xft.antialias: 1
 Xft.hinting: true
@@ -19,9 +19,7 @@ dwm.borderpx: 2
 dwm.barborder: 2
 
 dmenu.borderpx: 2
-"
 
-DARK_MODE="
 /* DARK MODE */
 #include \"themes/nord-dark\"
 dwm.normbgcolor: nord1
@@ -44,95 +42,46 @@ dmenu.highlightforeground: nord14
 dmenu.highlightselforeground: nord14
 "
 
-LIGHT_MODE="
-/* LIGHT MODE */
-#include \"themes/nord-light\"
-dwm.normbgcolor: nord1
-dwm.normfgcolor: nord6
-dwm.normbordercolor: nord1
-
-dwm.selfgcolor: nord1
-dwm.selbgcolor: nord6
-dwm.selbordercolor: nord6
-
-dmenu.background: nord1
-dmenu.foreground: nord6
-dmenu.selbackground: nord6
-dmenu.selforeground: nord1
-
-dmenu.highlightbackground: nord6
-dmenu.higlightselbackground: nord6
-
-dmenu.highlightforeground: nord14
-dmenu.highlightselforeground: nord14
-"
-
-if [ -f "$1" ]; then
-	PROMPT="$(printf "Light\\nDark" | dmenu -p "Change mode to:")"
-	if [ "$PROMPT" = "Light" ]; then
-		CHOOSED_CONFIG+="$ALWAYS $LIGHT_MODE"
-		echo "$CHOOSED_CONFIG" > "$HOME/.config/X11/Xresources" &&
+case "$1" in
+	light|Light)
+		echo "$XRESOURCES" > "$HOME/.config/X11/Xresources" &&
+		sed -i 's/DARK/LIGHT/;s/dark/light/' "$HOME/.config/X11/Xresources" &&
 		xrdb -merge "$HOME/.config/X11/Xresources" &&
 		dwmc reload &&
-		kill -s USR1 $(pidof st)
-		if ls /tmp/nvimsocket-* 1> /dev/null 2>&1; then
-			cmdvim "AirlineTheme ayu_light"
-		fi
+		kill -s USR1 "$(pidof st)"
 		emacsclient -e "(load-theme 'doom-nord-light 'no-confirm)"
-		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"ayu_light"/' "$HOME/.config/nvim/init.vim"
 		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
 		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"WhiteSur-light"/' "$HOME/.config/gtk-3.0/settings.ini"
-		genzathurarc > ~/.config/zathura/zathurarc
-	elif [ "$PROMPT" = "Dark" ]; then
-		CHOOSED_CONFIG+="$ALWAYS $DARK_MODE"
-		echo "$CHOOSED_CONFIG" > "$HOME/.config/X11/Xresources" &&
+		shift
+		exit 0
+		;;
+
+	dark|Dark)
+		echo "$XRESOURCES" > "$HOME/.config/X11/Xresources" &&
+		sed -i 's/LIGHT/DARK/;s/light/dark/' "$HOME/.config/X11/Xresources" &&
 		xrdb -merge "$HOME/.config/X11/Xresources" &&
 		dwmc reload &&
-		kill -s USR1 $(pidof st)
-		if ls /tmp/nvimsocket-* 1> /dev/null 2>&1; then
-			cmdvim "AirlineTheme ayu_dark"
-		fi
+		kill -s USR1 "$(pidof st)"
 		emacsclient -e "(load-theme 'doom-nord 'no-confirm)"
-		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"ayu_dark"/' "$HOME/.config/nvim/init.vim"
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Shades-of-gray"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Whitesur-dark"/' "$HOME/.config/gtk-3.0/settings.ini"
-		genzathurarc > ~/.config/zathura/zathurarc
-	fi
-else
-	if [ "$1" = "Light" ] || [ "$1" = "light" ]; then
-		CHOOSED_CONFIG+="$ALWAYS $LIGHT_MODE"
-		echo "$CHOOSED_CONFIG" > "$HOME/.config/X11/Xresources" &&
-		xrdb -merge "$HOME/.config/X11/Xresources" &&
-		dwmc reload &&
-		kill -s USR1 $(pidof st)
-		if ls /tmp/nvimsocket-* 1> /dev/null 2>&1; then
-			cmdvim "AirlineTheme ayu_light"
-		fi
-		emacsclient -e "(load-theme 'doom-nord-light 'no-confirm)"
-		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"ayu_light"/' "$HOME/.config/nvim/init.vim"
 		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"WhiteSur-light"/' "$HOME/.config/gtk-3.0/settings.ini"
-		genzathurarc > ~/.config/zathura/zathurarc
-	elif [ "$1" = "Dark" ] || [ "$1" = "dark" ]; then
-		CHOOSED_CONFIG+="$ALWAYS $DARK_MODE"
-		echo "$CHOOSED_CONFIG" > "$HOME/.config/X11/Xresources" &&
-		xrdb -merge "$HOME/.config/X11/Xresources" &&
-		dwmc reload &&
-		kill -s USR1 $(pidof st)
-		if ls /tmp/nvimsocket-* 1> /dev/null 2>&1; then
-			cmdvim "AirlineTheme ayu_dark"
-		fi
-		emacsclient -e "(load-theme 'doom-nord 'no-confirm)"
-		sed -i 's/^\(let g:airline_theme\s*=\s*\).*$/\1"ayu_dark"/' "$HOME/.config/nvim/init.vim"
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Shades-of-gray"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Whitesur-dark"/' "$HOME/.config/gtk-3.0/settings.ini"
-		genzathurarc > ~/.config/zathura/zathurarc
-	elif [ "$1" = "toggle" ] || [ "$1" = "Toggle" ]; then
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"WhiteSur-Dark"/' "$HOME/.config/gtk-3.0/settings.ini"
+		shift
+		exit 0
+		;;
+
+    toggle)
 		if grep -q "DARK MODE" "$HOME/.config/X11/Xresources"
 		then
 			change_mode light
 		else
 			change_mode dark
 		fi
-	fi
-fi
+		shift
+		exit 0
+		;;
+
+	*)
+		echo "Wrong argument, try light or dark"
+		shift
+		exit 1
+esac

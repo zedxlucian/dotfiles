@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=st (Jump)
+Comment=simple-terminal emulator for X
+Icon=utilities-terminal
+Exec=jumpapp st
+Categories=System;TerminalEmulator

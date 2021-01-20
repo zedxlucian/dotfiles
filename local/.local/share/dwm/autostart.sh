@@ -4,7 +4,7 @@ set -euo pipefail
 ###---Autostart---###
 
 # Xresources is needed to theme DWM & ST.
-xrdb -merge "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" &
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" ]] && xrdb -merge "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" &
 
 # Notification system
 dunst &
@@ -39,9 +39,6 @@ numlockx on &
 # Cloud provider synching software
 megasync &
 
-# Polkit authentification agent
-polkit-kde-agent &
-
 # Compositor
 picom -b &
 
@@ -49,7 +46,7 @@ picom -b &
 NVIM_LISTEN_ADRESS=/tmp/nvimsocket nvim &
 
 # Wallpaper
-xwallpaper --zoom ~/wallpapers/0040.jpg
+[[ -f "${XDG_DATA_HOME:-$HOME/.local/share}/profil/bg" ]] && xwallpaper --zoom ~/.local/share/profil/bg &
 
 # Statusbar
 dwmblocks &

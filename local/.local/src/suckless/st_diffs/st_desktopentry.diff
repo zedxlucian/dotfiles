@@ -1,0 +1,30 @@
+diff --git a/Makefile b/Makefile
+index 470ac86..5152b8b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -49,9 +49,12 @@ install: st
+ 	chmod 644 $(DESTDIR)$(MANPREFIX)/man1/st.1
+ 	tic -sx st.info
+ 	@echo Please see the README file regarding the terminfo entry of st.
++	mkdir -p $(DESTDIR)$(PREFIX)/share/applications
++	cp -f st.desktop $(DESTDIR)$(PREFIX)/share/applications
+ 
+ uninstall:
+ 	rm -f $(DESTDIR)$(PREFIX)/bin/st
+ 	rm -f $(DESTDIR)$(MANPREFIX)/man1/st.1
++	rm -f $(DESTDIR)$(PREFIX)/share/applications/st.desktop
+ 
+ .PHONY: all options clean dist install uninstall
+diff --git a/st.desktop b/st.desktop
+new file mode 100644
+index 0000000..a1b5116
+--- /dev/null
++++ b/st.desktop
+@@ -0,0 +1,7 @@
++[Desktop Entry]
++Type=Application
++Name=st
++Comment=simple-terminal emulator for X
++Icon=utilities-terminal
++Exec=st
++Categories=System;TerminalEmulator

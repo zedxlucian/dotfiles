@@ -4,7 +4,7 @@
 # This script provides an interface to patch suckless's softwares. The objectif is to make it easier on the user to try out new patches and use them.
 
 # Variables declarations (change these according to your needs):
-DOTFILES="$HOME/dotfiles/home/suckless"
+DOTFILES="$HOME/.local/src/suckless"
 PROJECT_NAME="$(basename $(pwd))"
 DIFF_DIR="${DOTFILES}/${PROJECT_NAME}_diffs"
 OLD_DIFF_DIR="${DOTFILES}/${PROJECT_NAME}_diffs/old"
