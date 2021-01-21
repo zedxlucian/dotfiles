@@ -21,18 +21,21 @@ error() { clear; printf "ERROR:\\n%s\\n" "$1"; exit 1;}
 
 
 gitconfig () { \
+    echo "Adding git credentials globally"
 	sudo -u lydien git config --global user.email "s.lydien@icloud.com"
 	sudo -u lydien git config --global user.name "Lydien Sandanasamy" ;}
 
 refreshkeys() { \
+    echo "Refreshing archlinux-keyring"
 	pacman --noconfirm -Sy archlinux-keyring >/dev/null 2>&1
 	}
 
 newperms() { # Set special sudoers settings for install (or after).
-	sed -i "/#LARBS/d" /etc/sudoers
-	echo "$* #LARBS" >> /etc/sudoers ;}
+    echo "Setting permissions"
+	echo "$* " >> /etc/sudoers ;}
 
 manualinstall() { # Installs $1 manually if not installed. Used only for AUR helper here.
+    echo "Installing yay"
 	[ -f "/usr/bin/$1" ] || (
 	cd /tmp || exit
 	rm -rf /tmp/"$1"*
@@ -43,6 +46,7 @@ manualinstall() { # Installs $1 manually if not installed. Used only for AUR hel
 cd /tmp || return) ;}
 
 maininstall() { # Installs all needed programs from main repo.
+    echo "Installing programs"
 	installpkg "$1"
 	}
 
@@ -66,9 +70,19 @@ pipinstall() { \
 	yes | pip install "$1"
 	}
 
+zshconfig () {
+    echo "Setting up zsh as default shell"
+    chsh -s /bin/zsh "lydien" >/dev/null 2>&1
+    sudo -u "lydien" mkdir -p "/home/lydien/.cache/zsh/"
+    echo "export ZDOTDIR=/home/lydien/.config/zsh" > /etc/zsh/zshenv
+}
+
 installationloop() { \
+	total=$(wc -l < $PACKAGES)
+    echo "Installing $n of $total"
 	aurinstalled=$(pacman -Qqm)
 	while IFS=, read -r tag program ; do
+		n=$((n+1))
 		case "$tag" in
 			"A") aurinstall "$program" ;;
 			"G") gitmakeinstall "$program" ;;
@@ -78,6 +92,7 @@ installationloop() { \
 	done < "$PACKAGES" ;}
 
 stowinstall() { 
+    echo "Installing dotfiles"
     branch="$REPOBRANCH"
 	dir=$(echo "$DOTFILESREPO" | cut -d. -f2 | sed "s/.*\//\/home\/lydien\//")
 	sudo -u "lydien" git clone --recursive -b "$branch" --depth 1 "$1" "$dir" >/dev/null 2>&1
@@ -91,19 +106,15 @@ systembeepoff() {
 	echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf ;}
 
 sucklesspatch(){
+    echo "Installing suckless software"
     [ ! -d "$DIFF_DIR" ] && echo "No patches" ; exit 1 ||
 	dir="$(ls "$DIFF_DIR")"
     for i in "$dir"/*.diff; do
         name=$(echo "$i" | sed -e 's/\/.*\///' -e 's/\.diff//' -e "s/${PROJECT_NAME}_//")
-        echo "Checking out master"
         sudo -u lydien git checkout master > /dev/null 2>&1 &&
-        echo "Creating branch $name"
         sudo -u lydien git branch "$name" > /dev/null 2>&1 &&
-        echo "Checking out $name"
         sudo -u lydien git checkout "$name" > /dev/null 2>&1 &&
-        echo "Applying patch : $name"
         sudo -u lydien git apply "$i" > /dev/null 2>&1 &&
-        echo "Adding and commiting"
         sudo -u lydien git add -A && sudo -u lydien git commit -m "Feature: Add $name patch" > /dev/null 2>&1
     done
     printf "\n" &&
@@ -119,7 +130,6 @@ rebasemakeinstall() {
     sudo -u lydien git branch custom && sudo -u lydien git checkout custom &&
     for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
         if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
-            echo "$branch"
             sudo -u lydien git rebase --rebase-merges $branch
         fi
     done
@@ -191,9 +201,7 @@ gitconfig || error "Could not set git credentials globally"
 systembeepoff
 
 # Make zsh the default shell for the user.
-chsh -s /bin/zsh "lydien" >/dev/null 2>&1
-sudo -u "lydien" mkdir -p "/home/lydien/.cache/zsh/"
-echo "export ZDOTDIR=/home/lydien/.config/zsh" > /etc/zsh/zshenv
+zshconfig
 
 # Use french layout globally and also use terminus-font for TTY.
 printf "KEYMAP=fr\nFONT=ter-122n\n" > /etc/vconsole.conf

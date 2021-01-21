@@ -63,8 +63,8 @@ A,megasync-bin
 A,checkupdates+aur
 ,pacman-contrib
 A,bitwarden-bin
-A,https://git.suckless.org/dwm
-A,https://git.suckless.org/st
-A,https://git.suckless.org/dmenu
-A,https://github.com/zedxlucian/dwmblocks
+A,https://git.suckless.org/dwm.git
+A,https://git.suckless.org/st.git
+A,https://git.suckless.org/dmenu.git
+A,https://github.com/zedxlucian/dwmblocks.git
 A,caffeine-ng
