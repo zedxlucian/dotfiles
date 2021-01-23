@@ -41,4 +41,5 @@ alias \
 alias \
 	mbsync="mbsync -c $XDG_CONFIG_HOME/isync/mbsyncrc" \
 	emacs="emacsclient_one_frame" \
-	ec="emacsclient -t"
+	ec="emacsclient -t" \
+	vault="cd ~/.local/share/Cryptomator/mnt/Vault"
