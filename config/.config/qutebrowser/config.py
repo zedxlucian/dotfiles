@@ -148,3 +148,8 @@ config.bind('M', 'hint links spawn mpv {hint-url}')
 config.bind('Z', 'hint links spawn st -e youtube-dl {hint-url}')
 config.bind('xx', 'config-cycle statusbar.show always never;; config-cycle tabs.show always never')
 c.content.blocking.method = 'adblock'
+
+config.bind('<z><l>', 'spawn --userscript qute-pass')
+config.bind('<z><u><l>', 'spawn --userscript qute-pass --username-only')
+config.bind('<z><p><l>', 'spawn --userscript qute-pass --password-only')
+config.bind('<z><o><l>', 'spawn --userscript qute-pass --otp-only')

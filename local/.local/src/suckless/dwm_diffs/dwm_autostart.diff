@@ -1,5 +1,5 @@
 diff --git a/dwm.1 b/dwm.1
-index ddc8321f..86e73f91 100644
+index ddc8321..86e73f9 100644
 --- a/dwm.1
 +++ b/dwm.1
 @@ -30,6 +30,14 @@ top left corner.  The tags which are applied to one or more windows are
@@ -40,7 +40,7 @@ index ddc8321f..86e73f91 100644
  dwm is customized by creating a custom config.h and (re)compiling the source
  code. This keeps it fast, secure and simple.
 diff --git a/dwm.c b/dwm.c
-index 664c527f..960fbe3e 100644
+index 664c527..960fbe3 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -29,6 +29,7 @@
