@@ -2,7 +2,7 @@
 
 mute=$(pamixer --get-mute)
 vol=$(pamixer --get-volume)
-iconmute=婢
+iconmute=
 ramp1=
 ramp2=
 ramp3=
