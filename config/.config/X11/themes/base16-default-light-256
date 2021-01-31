@@ -66,5 +66,9 @@ dmenu.foreground: base05
 dmenu.selbackground: base05
 dmenu.selforeground: base00
 
+! ST
+st.cwscale: 1.0
+st.chscale: 1.0
+st.alpha: 1.0
 st.background: base00
 st.foreground: base05
