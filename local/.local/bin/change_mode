@@ -9,17 +9,12 @@ Xft.dpi: 91
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
 
-/* ST */
-st.cwscale: 1.0
-st.chscale: 1.0
-st.alpha: 0.9
-
 dwm.topbar: 1
 dwm.borderpx: 2
 dwm.barborder: 2
 
 /* DARK MODE */
-#include \"themes/dark\"
+#include \"themes/base16-default-dark-256\"
 "
 
 case "$1" in
