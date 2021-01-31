@@ -72,8 +72,8 @@ install_patch() {
 
 helper() {
   printf "Usage:
-  $ volt -[r/p/d/h]
-  $ volt --[rebase/patch/diff/debug/help]\n
+  $ satch -[r/p/d/h]
+  $ satch --[rebase/patch/diff/debug/help]\n
 Options:
   -r or --rebase        Rebase all selected branches, make and make install.
   -p or --patch         Patch all selected branches, make, & make install.
