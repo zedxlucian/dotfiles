@@ -26,7 +26,7 @@
       (lydien/org-mode-setup)
       (lydien/org-mode-visual-fill))
 
-(setq org-directory "~/MEGA/org/"
+(setq org-directory "~/doc/org/"
       org-archive-location (concat org-directory ".archive/%s::")
       org-roam-directory (concat org-directory "notes/")
       org-roam-db-location (concat org-roam-directory ".org-roam.db")

@@ -53,3 +53,6 @@ dwmblocks &
 
 # SSH Agent
 eval $(ssh-agent) &
+
+# Caffeine
+/usr/bin/caffeine &

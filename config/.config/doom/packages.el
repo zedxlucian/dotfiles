@@ -48,5 +48,5 @@
 ;(unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
-(package! modus-operandi-theme)
-(package! modus-vivendi-theme)
+(package! modus-themes)
+(package! xresources-theme)

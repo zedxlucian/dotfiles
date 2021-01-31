@@ -5,10 +5,10 @@ export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | paste -sd ':')"
 export PATH="$PATH:$HOME/.emacs.d/bin"
 
 # Default programs
-export EDITOR="emacsclient_one_frame"
-export VISUAL="emacsclient_one_frame"
+export EDITOR="emacsclient -c"
+export VISUAL="emacsclient -c"
 export TERMINAL="st"
-export BROWSER="/usr/bin/brave-nightly"
+export BROWSER="qutebrowser"
 export TIME_STYLE="+%d-%m-%Y %H:%M:%S"
 export COLORTERM="truecolor"
 # ~/ Clean-up:

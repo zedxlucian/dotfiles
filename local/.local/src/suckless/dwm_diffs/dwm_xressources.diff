@@ -1,5 +1,5 @@
 diff --git a/drw.c b/drw.c
-index 4cdbcbe5..8f1059e9 100644
+index 4cdbcbe..8f1059e 100644
 --- a/drw.c
 +++ b/drw.c
 @@ -208,7 +208,7 @@ drw_clr_create(Drw *drw, Clr *dest, const char *clrname)
@@ -12,7 +12,7 @@ index 4cdbcbe5..8f1059e9 100644
  	size_t i;
  	Clr *ret;
 diff --git a/drw.h b/drw.h
-index 4bcd5add..42b04ce6 100644
+index 4bcd5ad..42b04ce 100644
 --- a/drw.h
 +++ b/drw.h
 @@ -39,7 +39,7 @@ void drw_font_getexts(Fnt *font, const char *text, unsigned int len, unsigned in
@@ -25,7 +25,7 @@ index 4bcd5add..42b04ce6 100644
  /* Cursor abstraction */
  Cur *drw_cur_create(Drw *drw, int shape);
 diff --git a/dwm.c b/dwm.c
-index 664c527f..4d1d1d86 100644
+index 664c527..4d1d1d8 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -36,6 +36,7 @@

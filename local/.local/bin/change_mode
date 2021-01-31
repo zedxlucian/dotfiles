@@ -12,34 +12,14 @@ Xft.lcdfilter: lcddefault
 /* ST */
 st.cwscale: 1.0
 st.chscale: 1.0
-st.alpha: 1.0
+st.alpha: 0.9
 
 dwm.topbar: 1
 dwm.borderpx: 2
 dwm.barborder: 2
 
-dmenu.borderpx: 2
-
 /* DARK MODE */
-#include \"themes/nord-dark\"
-dwm.normbgcolor: nord1
-dwm.normfgcolor: nord6
-dwm.normbordercolor: nord1
-
-dwm.selfgcolor: nord1
-dwm.selbgcolor: nord6
-dwm.selbordercolor: nord6
-
-dmenu.background: nord1
-dmenu.foreground: nord6
-dmenu.selbackground: nord6
-dmenu.selforeground: nord1
-
-dmenu.highlightbackground: nord6
-dmenu.higlightselbackground: nord6
-
-dmenu.highlightforeground: nord14
-dmenu.highlightselforeground: nord14
+#include \"themes/dark\"
 "
 
 case "$1" in
@@ -50,8 +30,8 @@ case "$1" in
 		dwmc reload &&
 		kill -s USR1 "$(pidof st)"
 		emacsclient -e "(load-theme 'doom-nord-light 'no-confirm)"
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"WhiteSur-light"/' "$HOME/.config/gtk-3.0/settings.ini"
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc-Lighter"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc-Lighter"/' "$HOME/.config/gtk-3.0/settings.ini"
 		shift
 		exit 0
 		;;
@@ -63,8 +43,8 @@ case "$1" in
 		dwmc reload &&
 		kill -s USR1 "$(pidof st)"
 		emacsclient -e "(load-theme 'doom-nord 'no-confirm)"
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
-		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"WhiteSur-Dark"/' "$HOME/.config/gtk-3.0/settings.ini"
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc-Dark"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
+		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc-Dark"/' "$HOME/.config/gtk-3.0/settings.ini"
 		shift
 		exit 0
 		;;

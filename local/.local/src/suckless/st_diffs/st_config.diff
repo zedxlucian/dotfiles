@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 6f05dce..3eafe46 100644
+index 6f05dce..89019e7 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -5,7 +5,15 @@
@@ -50,18 +50,9 @@ index 6f05dce..3eafe46 100644
  
  /*
   * Default shape of cursor
-@@ -166,24 +178,30 @@ static unsigned int defaultattr = 11;
-  * Note that if you want to use ShiftMask with selmasks, set this to an other
-  * modifier, set to 0 to not use it.
-  */
--static uint forcemousemod = ShiftMask;
-+static uint forcemousemod = 0;
- 
- /*
-  * Internal mouse shortcuts.
+@@ -173,17 +185,22 @@ static uint forcemousemod = ShiftMask;
   * Beware that overloading Button1 will disable the selection.
   */
-+
  static MouseShortcut mshortcuts[] = {
 -	/* mask                 button   function        argument       release */
 -	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
@@ -89,7 +80,7 @@ index 6f05dce..3eafe46 100644
  
  static Shortcut shortcuts[] = {
  	/* mask                 keysym          function        argument */
-@@ -191,14 +209,18 @@ static Shortcut shortcuts[] = {
+@@ -191,14 +208,22 @@ static Shortcut shortcuts[] = {
  	{ ControlMask,          XK_Print,       toggleprinter,  {.i =  0} },
  	{ ShiftMask,            XK_Print,       printscreen,    {.i =  0} },
  	{ XK_ANY_MOD,           XK_Print,       printsel,       {.i =  0} },
@@ -105,10 +96,14 @@ index 6f05dce..3eafe46 100644
  	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
  	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
  	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
-+	{ MODKEY,               XK_k,           kscrollup,      {.i = 1}, },
-+	{ MODKEY,               XK_j,           kscrolldown,    {.i = 1}, },
-+	{ MODKEY,               XK_u,           kscrollup,      {.i = -1}, },
-+	{ MODKEY,               XK_d,           kscrolldown,    {.i = -1}, },
++	{ MODKEY,               XK_k,           kscrollup,      {.i =  1} },
++	{ MODKEY,               XK_j,           kscrolldown,    {.i =  1} },
++	{ MODKEY,               XK_u,           kscrollup,      {.i = -1} },
++	{ MODKEY,               XK_d,           kscrolldown,    {.i = -1} },
++	{ TERMMOD,              XK_K,           zoom,           {.f = +1} },
++	{ TERMMOD,              XK_J,           zoom,           {.f = -1} },
++	{ TERMMOD,              XK_U,           zoom,           {.f = +2} },
++	{ TERMMOD,              XK_D,           zoom,           {.f = -2} },
  };
  
  /*
