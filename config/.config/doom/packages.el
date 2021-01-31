@@ -49,4 +49,4 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 (package! modus-themes)
-(package! xresources-theme)
+(package! base16-theme)
