@@ -53,6 +53,7 @@
 *color20:      base04
 *color21:      base06
 
+! DWM
 dwm.normbgcolor: base00
 dwm.normfgcolor: base05
 dwm.normbordercolor: base00
@@ -61,6 +62,7 @@ dwm.selfgcolor: base05
 dwm.selbgcolor: base00
 dwm.selbordercolor: base05
 
+! DMENU
 dmenu.background: base00
 dmenu.foreground: base05
 dmenu.selbackground: base05
