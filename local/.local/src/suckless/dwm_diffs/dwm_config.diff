@@ -297,7 +297,3 @@ index 1c0b587..34187e0 100644
 +	{ "setlayoutex",    setlayoutex },
 +	{ "reload",	        livereloadxres },
 +};
-diff --git a/drw.o b/drw.o
-new file mode 100644
-index 0000000..941460b
-Binary files /dev/null and b/drw.o differ
