@@ -14,9 +14,8 @@ dwm.borderpx: 2
 dwm.barborder: 2
 
 /* DARK MODE */
-#include \"themes/base16-default-dark-256\"
+#include \"themes/nord-dark\"
 "
-
 case "$1" in
 	light|Light)
 		echo "$XRESOURCES" > "$HOME/.config/X11/Xresources" &&
@@ -24,7 +23,7 @@ case "$1" in
 		xrdb -merge "$HOME/.config/X11/Xresources" &&
 		dwmc reload &&
 		pidof st | xargs kill -s USR1
-		emacsclient -e "(load-theme 'base16-default-light t)"
+		emacsclient -e "(load-theme 'doom-nord-light 'noconfirm)"
 		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc-Lighter"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
 		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc-Lighter"/' "$HOME/.config/gtk-3.0/settings.ini"
 		shift
@@ -37,7 +36,7 @@ case "$1" in
 		xrdb -merge "$HOME/.config/X11/Xresources" &&
 		dwmc reload &&
 		pidof st | xargs kill -s USR1
-		emacsclient -e "(load-theme 'base16-default-dark t)"
+		emacsclient -e "(load-theme 'doom-nord 'noconfirm)"
 		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc-Dark"/' "$HOME/.config/gtk-2.0/gtkrc-2.0"
 		sed -i 's/^\(gtk-theme-name \s*=\s*\).*$/\1"Arc-Dark"/' "$HOME/.config/gtk-3.0/settings.ini"
 		shift

@@ -1,8 +1,7 @@
 (setq doom-font (font-spec :family "monospace" :size 14 :adstyle "Light")
       doom-variable-pitch-font (font-spec :family "sans"))
 
-(load-theme 'base16-default-dark t)
-
+(setq doom-theme 'doom-nord )
 (setq display-line-numbers-type 'relative)
 
 (setq user-full-name "Lydien SANDANASAMY"
@@ -43,6 +42,3 @@
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 
 (add-hook! dired-mode 'dired-hide-details-mode)
-
- (set-frame-parameter (selected-frame) 'alpha '(90 . 50))
- (add-to-list 'default-frame-alist '(alpha . (90 . 50)))

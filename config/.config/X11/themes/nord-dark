@@ -45,3 +45,25 @@
 *.color13: nord15
 *.color14: nord7
 *.color15: nord6
+
+! DWM
+dwm.normbgcolor: nord0
+dwm.normfgcolor: nord5
+dwm.normbordercolor: nord0
+
+dwm.selfgcolor: nord5
+dwm.selbgcolor: nord0
+dwm.selbordercolor: nord6
+
+! DMENU
+dmenu.background: nord0
+dmenu.foreground: nord5
+dmenu.selbackground: nord5
+dmenu.selforeground: nord0
+
+! ST
+st.cwscale: 1.0
+st.chscale: 1.0
+st.alpha: 1.0
+st.background: nord0
+st.foreground: nord6

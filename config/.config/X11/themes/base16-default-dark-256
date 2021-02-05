@@ -55,22 +55,22 @@
 
 ! DWM
 dwm.normbgcolor: base00
-dwm.normfgcolor: base05
+dwm.normfgcolor: base06
 dwm.normbordercolor: base00
 
-dwm.selfgcolor: base05
+dwm.selfgcolor: base06
 dwm.selbgcolor: base00
-dwm.selbordercolor: base05
+dwm.selbordercolor: base06
 
 ! DMENU
 dmenu.background: base00
-dmenu.foreground: base05
-dmenu.selbackground: base05
-dmenu.selforeground: base00
+dmenu.foreground: base06
+dmenu.selbackground: base00
+dmenu.selforeground: base06
 
 ! ST
 st.cwscale: 1.0
 st.chscale: 1.0
 st.alpha: 0.9
 st.background: base00
-st.foreground: base05
+st.foreground: base06

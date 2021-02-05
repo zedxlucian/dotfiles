@@ -119,8 +119,8 @@ c.colors.tabs.even.bg = xresources["*.background"]
 c.colors.tabs.odd.bg = xresources["*.background"]
 c.colors.tabs.even.fg = xresources["*.foreground"]
 c.colors.tabs.odd.fg = xresources["*.foreground"]
-c.colors.tabs.selected.even.bg = xresources["*.base08"]
-c.colors.tabs.selected.odd.bg = xresources["*.base08"]
+c.colors.tabs.selected.even.bg = xresources["*.color8"]
+c.colors.tabs.selected.odd.bg = xresources["*.color8"]
 c.colors.hints.bg = xresources["*.background"]
 c.colors.hints.fg = xresources["*.foreground"]
 
@@ -128,7 +128,7 @@ c.colors.hints.fg = xresources["*.foreground"]
 c.fonts.web.size.default = 20
 c.fonts.default_size = "11pt"
 
-c.colors.tabs.indicator.stop = xresources["*.base14"]
+c.colors.tabs.indicator.stop = xresources["*.color8"]
 c.colors.tabs.bar.bg = xresources["*.background"]
 c.colors.completion.odd.bg = xresources["*.background"]
 c.colors.completion.even.bg = xresources["*.background"]
