@@ -34,6 +34,7 @@ rebase_make_install() {
         fi
     done
     make && sudo make install &&
+    rm -rf drw.o config.h dwm dwm.o util.o &&
     git checkout master && git branch -D custom &&
     clean_reset
 }
