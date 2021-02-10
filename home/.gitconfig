@@ -1,7 +1,7 @@
 [user]
 	email = s.lydien@icloud.com
 	name = Lydien Sandanasamy
-	signingKey = 62E21CF1
+	signingKey = 565867BF
 [gpg]
 	program = gpg2
 [commit]
