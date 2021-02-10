@@ -70,3 +70,9 @@ function in() {
 function re() {
     yay -Qq | fzf -q "$1" -m --preview 'yay -Qi {1}' | xargs -ro yay -Rns
 }
+
+# GPG pinentry config
+export GPG_TTY=$(tty)
+gpg-connect-agent updatestartuptty /bye >/dev/null
+
+gpgconf --launch gpg-agent
