@@ -3,6 +3,7 @@
 # Adds ~.local/bin to $PATH
 export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | paste -sd ':')"
 export PATH="$PATH:$HOME/.emacs.d/bin"
+export PATH="$PATH:$HOME/.gem/ruby/2.7.0/bin"
 
 # Default programs
 export EDITOR="emacsclient -c"
@@ -21,6 +22,9 @@ export XINITRC="${XDG_CONFIG_HOME:-$HOME/.config}/X11/xinitrc"
 export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
 export LESSHISTFILE="-"
 export DISPLAY=":0.0"
+
+# Vagrant dependency compatibility fix
+VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1
 
 # FZF ENV
 export FZF_DEFAULT_COMMAND="fd -H . '/etc' $HOME '/usr'"
