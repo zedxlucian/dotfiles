@@ -1,13 +1,12 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/sh
 
 ###---Autostart---###
 
 # Xresources is needed to theme DWM & ST.
-[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" ]] && xrdb -merge "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" &
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" ] && xrdb -merge "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources" &
 
 # Notification system
-dunst &
+pidof dunst || dunst &
 
 # Keyboard Layout
 # 1. Set default keyboard leyout
@@ -22,37 +21,34 @@ setxkbmap -layout fr \
 xset r rate 300 50 &
 
 # Automatic Screen-Lock
-xss-lock  -- betterlockscreen -l blur &
+pidof xss-lock || xss-lock  -- betterlockscreen -l blur &
 
 # Cursor pointing left
-xsetroot -cursor_name left_ptr &
+ xsetroot -cursor_name left_ptr &
 
 # Program that hides the mouse after 3 seconds of idle
-unclutter -idle 3 &
+pidof unclutter || unclutter -idle 3 &
 
 # Emacs Daemon
-emacs --daemon &
+pidof emacs || emacs --daemon &
 
 # Numerical pad on
 numlockx on &
 
 # Cloud provider synching software
-megasync &
+pidof megasync || megasync &
 
 # Compositor
-picom -b &
-
-# Nvim server
-NVIM_LISTEN_ADRESS=/tmp/nvimsocket nvim &
+pidof picom || picom -b &
 
 # Wallpaper
-[[ -f "${XDG_DATA_HOME:-$HOME/.local/share}/profil/bg" ]] && xwallpaper --zoom ~/.local/share/profil/bg &
+[ -f "${XDG_DATA_HOME:-$HOME/.local/share}/profil/bg" ] && xwallpaper --zoom ~/.local/share/profil/bg &
 
 # Statusbar
-dwmblocks &
-
-# SSH Agent
-eval $(ssh-agent) &
+pidof dwmblocks || dwmblocks &
 
 # Caffeine
-/usr/bin/caffeine &
+pidof caffeine-ng || /usr/bin/caffeine &
+
+# Cryptomator
+pidof cryptomator || crytomator &
