@@ -1,3 +1,0 @@
-#!/bin/sh
-
-xrdb -merge "${XDG_CONFIG_HOME:-$HOME/.config}/X11/Xresources"
