@@ -70,6 +70,10 @@ config.bind('<z><o><l>', 'spawn --userscript qute-pass --otp-only')
 c.tabs.position = "left"
 c.tabs.title.format = "{index}"
 c.tabs.width = "2%"
+c.tabs.favicons.scale = 1.5
+c.tabs.indicator.width = 0
+c.tabs.new_position.unrelated = "next"
+c.tabs.padding = { "bottom": 4, "left": 0, "right": 0, "top": 0 }
 
 # Always auto-save the session
 c.auto_save.session = True
@@ -126,7 +130,7 @@ c.colors.hints.fg = xresources["*.foreground"]
 
 # fonts
 c.fonts.web.size.default = 20
-c.fonts.default_size = "11pt"
+c.fonts.default_size = "12pt"
 
 c.colors.tabs.indicator.stop = xresources["*.color8"]
 c.colors.tabs.bar.bg = xresources["*.background"]

@@ -1,4 +1,4 @@
-(setq doom-font (font-spec :family "monospace" :size 14 :adstyle "Light")
+(setq doom-font (font-spec :family "Roboto Mono" :size 14 :adstyle "Light")
       doom-variable-pitch-font (font-spec :family "sans"))
 
 (setq doom-theme 'doom-nord )

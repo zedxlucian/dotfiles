@@ -58,12 +58,10 @@ dwm.selbordercolor: nord6
 ! DMENU
 dmenu.background: nord0
 dmenu.foreground: nord5
-dmenu.selbackground: nord5
+dmenu.selbackground: nord9
 dmenu.selforeground: nord0
 
 ! ST
-st.cwscale: 1.0
-st.chscale: 1.0
 st.alpha: 1.0
 st.background: nord0
 st.foreground: nord6
