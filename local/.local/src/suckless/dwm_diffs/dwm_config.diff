@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 1c0b587..841ad2f 100644
+index 1c0b587..dc6969b 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -1,53 +1,88 @@
@@ -84,7 +84,7 @@ index 1c0b587..841ad2f 100644
 +	{ "mpv",            "gl",              NULL,       0,            1,           -1 },
 +	{ NULL,            "pavucontrol",      NULL,       0,            1,           -1 },
 +	{ "java",          "java",             NULL,       0,            1,           -1 },
-+	{ "qutebrowser",   "qutebrowser",      NULL,       1 << 1,       1,           -1 },
++	{ "qutebrowser",   "qutebrowser",      NULL,       1 << 1,       0,           -1 },
 +	{ "emacs",          "emacs",           NULL,       1 << 2,       0,           -1 },
 +	{ NULL,		       "spterm",	       NULL,	   SPTAG(0),	 1,			  -1 },
 +	{ NULL,		       "spncspot",	       NULL,	   SPTAG(1),	 1,			  -1 },

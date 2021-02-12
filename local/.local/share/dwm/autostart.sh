@@ -51,4 +51,4 @@ pidof dwmblocks || dwmblocks &
 pidof caffeine-ng || /usr/bin/caffeine &
 
 # Cryptomator
-pidof cryptomator || crytomator &
+pidof cryptomator || cryptomator &
