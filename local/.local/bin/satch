@@ -8,110 +8,116 @@ DOTFILES="$HOME/.local/src/suckless"
 PROJECT_NAME="$(basename "$(pwd)")"
 DIFF_DIR="${DOTFILES}/${PROJECT_NAME}_diffs"
 OLD_DIFF_DIR="${DOTFILES}/${PROJECT_NAME}_diffs/old"
+UL="\033[4m"    # underline
+RS="\033[0m"    # reset
+FGRN="\033[32m" # foreground green
+FYEL="\033[33m" # foreground yellow
 
 # Functions declarations:
+color()(set -o pipefail;"$@" 2> >(sed $'s,.*,\e[31m&\e[m,'>&2))
+
+verbose() {
+    printf "\n${FYEL}%s${RS}\n" "$1"
+}
 
 apply_patch() {
-    name=$( echo "$1" | sed -e 's/\/.*\///' -e 's/\.diff//' -e 's/dwm\-//' -e 's/\-.*//')
+    name=$( echo -e "$1" | sed -e 's/\/.*\///' -e 's/\.diff//' -e 's/dwm\-//' -e 's/\-.*//')
     [ -f "$1" ] &&
-    echo "Checking out master"
-    git checkout master &&
-    echo "Creating branch $name"
-    git branch "$name" &&
-    echo "Checking out $name"
-    git checkout "$name" &&
-    echo "Applying patch : $name"
-    git apply "$1" &&
-    echo "Adding and commiting"
-    git add -A && git commit -m "Feature: add $name patch"
+    verbose "Switch to branch 'master'"
+    branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+    color git checkout -q master &&
+    verbose "Create and switch to branch '$name'" &&
+    color git checkout -q -b "$name" &&
+    verbose "Apply patch : $name"
+    color git apply "$1" &&
+    verbose "Add and commit"
+    color git add -A && color git commit -q -m "Feature: add $name patch"
 }
 
 rebase() {
     ARRAY=()
     clean_reset >/dev/null 2>&1 &&
-    git branch custom && git checkout custom &&
+    color git checkout -q -b custom &&
     for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
         if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
             ARRAY+=("$branch")
         fi
     done &&
-    name=$( echo "$1" | sed -e 's/\/.*\///' -e 's/\.diff//' -e 's/dwm\-//' -e 's/\-.*//')
+    name=$( echo -e "$1" | sed -e 's/\/.*\///' -e 's/\.diff//' -e 's/dwm\-//' -e 's/\-.*//')
     local arg="$name"; shift
     for item in ${ARRAY[*]}; do
         if [[ "$item" == "$arg" ]]; then
-            echo "$arg is a branch, merging it to branch 'custom'"
-            git rebase --rebase-merges "$item"
+            verbose "Merge $arg to branch 'custom'"
+            color git rebase -q --rebase-merges "$item"
         fi
     done
-    git checkout master && git branch -D custom
+    color git checkout -q master && printf "\n${FGRN}%s${RS}\n" "You can install the software with the -i option now."
 }
 
 rebase_all() {
     create_diff &&
-    git branch custom && git checkout custom &&
+    color git checkout -q -b custom &&
     for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
         if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
-            echo "$branch"
-            git rebase --rebase-merges "$branch"
+            verbose "Merge $branch to branch 'custom'"
+            color git rebase -q --rebase-merges "$branch"
         fi
     done
 }
 
 create_diff() {
-    mkdir -p "$OLD_DIFF_DIR" &&
-    mv "$DIFF_DIR"/*.diff "$OLD_DIFF_DIR"  &&
+    color mkdir -p "$OLD_DIFF_DIR" &&
+    color mv "$DIFF_DIR"/*.diff "$OLD_DIFF_DIR"  &&
     clean_reset &&
     for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
         if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
-            git diff master.."$branch" > "${DIFF_DIR}/${PROJECT_NAME}_${branch}.diff"
+            color git diff master.."$branch" > "${DIFF_DIR}/${PROJECT_NAME}_${branch}.diff"
         fi
     done
 }
 
 apply_custom_diffs() {
     if [ ! -d "$DIFF_DIR" ];then
-        echo "No patches"
+        verbose "No patches"
         exit 1
     fi
     files="$(ls "$DIFF_DIR"/*.diff)"
     for i in $files; do
         name=$(echo "$i" | sed -e 's/\/.*\///' -e 's/\.diff//' -e "s/${PROJECT_NAME}_//")
-        echo "Checking out master"
-        git checkout master > /dev/null 2>&1 &&
-        echo "Creating branch $name"
-        git branch "$name" > /dev/null 2>&1 &&
-        echo "Checking out $name"
-        git checkout "$name" > /dev/null 2>&1 &&
-        echo "Applying patch : $name"
-        git apply "$i" > /dev/null 2>&1 &&
-        echo "Adding and commiting"
-        git add -A && git commit -m "Feature: Add $name patch" > /dev/null 2>&1
+        verbose "Switch to branch 'master'"
+        color git checkout -q master &&
+        verbose "Create and switch to branch '$name'"
+        color git checkout -q -b "$name" &&
+        verbose "Apply patch : $name"
+        color git apply "$i" &&
+        verbose "Add and commit"
+        color git add -A  && color git commit -q -m "Feature: Add $name patch"
     done
-    printf "\n" &&
     clean_reset
 }
 
 helper() {
-  printf "Usage:
-  $ satch -[a/d/h/i/m/p/r]
-  $ satch -p config -i\n
-Options:
-  -p                    Create branch 'custom' and rebase branch on it. Needs branch name as an argument.
-  -a                    Apply custom diffs created with -d option, use this on new repository.
-  -d                    Create diff of all branches.
-  -i                    Install software with make install command.
-  -m                    Check errors in software with make command.
-  -h                    Show this help.
-  -r                    Create branch 'custom' and rebase all branches on it."
+    echo -e "${UL}Usage${RS}:"
+    echo -e "
+   $ satch -[a/d/h/i/m/p/r]
+   $ satch -p <path/to/filename.diff> -rm\n
+${UL}Options${RS}:
+  -a            Apply custom diffs created with '-d' option.
+  -d            Create diff of all branches.
+  -h            Show this help.
+  -i            Install software with make install command.
+  -m            Check errors in software with make command.
+  -p            Check errors in software with make command.
+  -r            Create branch 'custom' and rebase all branches on it.
+"
 }
 
 clean_reset() {
-    [[ -f $HOME/.gitconfig ]] &&
-    git checkout master &&
-    make clean &&
-    rm -f config.h && git reset --hard master
+    [ -f "$HOME/.gitconfig" ] &&
+    color git checkout -q master &&
+    color make clean &&
+    color rm -f config.h && color git reset -q --hard master
 }
-echo "Number of arguments passed: $#"
 
 while getopts "p:adimhr" option; do
     case "${option}" in
@@ -122,12 +128,12 @@ while getopts "p:adimhr" option; do
                         apply_patch "${OPTARG}" &&
                         rebase "${OPTARG}"
                     else
-                        echo "E: '${OPTARG}' is not a valid file name."
+                        echo -e "E: '${OPTARG}' is not a valid file name."
                         exit 1
                     fi
                     ;;
                 *)
-                    printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot rebase... exiting....\n"
+                    printf "E: You are currently not in a suckless's software directory.\nRun this script in a suckless's project directory.\n"
                     exit 1
                     ;;
             esac
@@ -138,7 +144,7 @@ while getopts "p:adimhr" option; do
                     rebase_all
                     ;;
                 *)
-                    printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot rebase... exiting....\n"
+                    printf "E: You are currently not in a suckless's software directory.\nRun this script in a suckless's project directory.\n"
                     exit 1
                     ;;
             esac
@@ -149,7 +155,7 @@ while getopts "p:adimhr" option; do
                     clean_reset && apply_custom_diffs
                     ;;
                 *)
-                    printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot patch... exiting....\n"
+                    printf "E: You are currently not in a suckless's software directory.\nRun this script in a suckless's project directory.\n"
                     exit 1
                     ;;
             esac
@@ -158,10 +164,10 @@ while getopts "p:adimhr" option; do
             case $PROJECT_NAME in
                 dwm|st|dmenu)
                     sudo make install
-                    clean_reset && git branch -D custom
+                    clean_reset && git branch -q -D custom
                     ;;
                 *)
-                    printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot patch... exiting....\n"
+                    printf "E: You are currently not in a suckless's software directory.\nRun this script in a suckless's project directory.\n"
                     exit 1
                     ;;
             esac
@@ -172,7 +178,7 @@ while getopts "p:adimhr" option; do
                     make
                     ;;
                 *)
-                    printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot patch... exiting....\n"
+                    printf "E: You are currently not in a suckless's software directory.\nRun this script in a suckless's project directory.\n"
                     exit 1
                     ;;
             esac
@@ -181,10 +187,9 @@ while getopts "p:adimhr" option; do
             case $PROJECT_NAME in
                 dwm|st|dmenu)
                     create_diff
-
                     ;;
                 *)
-                    printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot create diffs... exiting....\n"
+                    printf "E: You are currently not in a suckless's software directory.\nRun this script in a suckless's project directory.\n"
                     exit 1
                     ;;
             esac
@@ -193,7 +198,7 @@ while getopts "p:adimhr" option; do
             helper
             ;;
         *)
-            echo -e "E: Invalid option '$1'\n"
+            echo -e -e "E: Invalid option '$1'\n"
             helper
             exit 1
             ;;
