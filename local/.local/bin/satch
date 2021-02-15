@@ -1,60 +1,80 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # This script is inspired by HEXDSL's youtube video called [[yt:https://www.youtube.com/watch?v=UEmPboaTDpQ&t=342s][DWM's patching guide]]
 # This script provides an interface to patch suckless's softwares. The objectif is to make it easier on the user to try out new patches and use them.
 
 # Variables declarations (change these according to your needs):
 DOTFILES="$HOME/.local/src/suckless"
-PROJECT_NAME="$(basename $(pwd))"
+PROJECT_NAME="$(basename "$(pwd)")"
 DIFF_DIR="${DOTFILES}/${PROJECT_NAME}_diffs"
 OLD_DIFF_DIR="${DOTFILES}/${PROJECT_NAME}_diffs/old"
 
 # Functions declarations:
-rebase_make() {
-    create_diff &&
-    git branch custom && git checkout custom &&
-    for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
-        if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
-            echo $branch
-            git rebase --rebase-merges $branch
-        fi
-    done
-    make
-    # git checkout master && git branch -D custom &&
-    # clean_reset
+
+apply_patch() {
+    name=$( echo "$1" | sed -e 's/\/.*\///' -e 's/\.diff//' -e 's/dwm\-//' -e 's/\-.*//')
+    [ -f "$1" ] &&
+    echo "Checking out master"
+    git checkout master &&
+    echo "Creating branch $name"
+    git branch "$name" &&
+    echo "Checking out $name"
+    git checkout "$name" &&
+    echo "Applying patch : $name"
+    git apply "$1" &&
+    echo "Adding and commiting"
+    git add -A && git commit -m "Feature: add $name patch"
 }
 
-rebase_make_install() {
+rebase() {
+    ARRAY=()
+    clean_reset >/dev/null 2>&1 &&
+    git branch custom && git checkout custom &&
+    for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
+        if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
+            ARRAY+=("$branch")
+        fi
+    done &&
+    name=$( echo "$1" | sed -e 's/\/.*\///' -e 's/\.diff//' -e 's/dwm\-//' -e 's/\-.*//')
+    local arg="$name"; shift
+    for item in ${ARRAY[*]}; do
+        if [[ "$item" == "$arg" ]]; then
+            echo "$arg is a branch, merging it to branch 'custom'"
+            git rebase --rebase-merges "$item"
+        fi
+    done
+    git checkout master && git branch -D custom
+}
+
+rebase_all() {
     create_diff &&
     git branch custom && git checkout custom &&
     for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
         if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
-            echo $branch
-            git rebase --rebase-merges $branch
+            echo "$branch"
+            git rebase --rebase-merges "$branch"
         fi
     done
-    make && sudo make install &&
-    rm -rf drw.o config.h dwm dwm.o util.o &&
-    git checkout master && git branch -D custom &&
-    clean_reset
 }
 
 create_diff() {
-    rm -rf "$OLD_DIFF_DIR" > /dev/null 2>&1 && mkdir -p "$OLD_DIFF_DIR" && mkdir -p "$DIFF_DIR" && mv "$DIFF_DIR"*.diff "$OLD_DIFF_DIR" > /dev/null 2>&1 || true &&
+    mkdir -p "$OLD_DIFF_DIR" &&
+    mv "$DIFF_DIR"/*.diff "$OLD_DIFF_DIR"  &&
     clean_reset &&
     for branch in $(git for-each-ref --format='%(refname)' refs/heads/ | cut -d'/' -f3); do
         if [ "$branch" != "master" ] && [ "$branch" != "custom" ];then
-            git diff master..$branch > "${DIFF_DIR}/${PROJECT_NAME}_${branch}.diff"
+            git diff master.."$branch" > "${DIFF_DIR}/${PROJECT_NAME}_${branch}.diff"
         fi
     done
 }
 
-install_patch() {
+apply_custom_diffs() {
     if [ ! -d "$DIFF_DIR" ];then
         echo "No patches"
         exit 1
     fi
-    for i in $(ls "$DIFF_DIR"/*.diff);do
+    files="$(ls "$DIFF_DIR"/*.diff)"
+    for i in $files; do
         name=$(echo "$i" | sed -e 's/\/.*\///' -e 's/\.diff//' -e "s/${PROJECT_NAME}_//")
         echo "Checking out master"
         git checkout master > /dev/null 2>&1 &&
@@ -73,92 +93,109 @@ install_patch() {
 
 helper() {
   printf "Usage:
-  $ satch -[r/p/d/h]
-  $ satch --[rebase/patch/diff/debug/help]\n
+  $ satch -[a/d/h/i/m/p/r]
+  $ satch -p config -i\n
 Options:
-  -r or --rebase        Rebase all selected branches, make and make install.
-  -p or --patch         Patch all selected branches, make, & make install.
-  -d or --diff          Create diff of all branches.
-  --debug               Merge all selected branches and make only.
-  -h or --help          Shows this help & usage.\n"
+  -p                    Create branch 'custom' and rebase branch on it. Needs branch name as an argument.
+  -a                    Apply custom diffs created with -d option, use this on new repository.
+  -d                    Create diff of all branches.
+  -i                    Install software with make install command.
+  -m                    Check errors in software with make command.
+  -h                    Show this help.
+  -r                    Create branch 'custom' and rebase all branches on it."
 }
 
 clean_reset() {
+    [[ -f $HOME/.gitconfig ]] &&
     git checkout master &&
     make clean &&
     rm -f config.h && git reset --hard master
 }
+echo "Number of arguments passed: $#"
 
-skip=false
-for op in "$@";do
-if $skip;then skip=false;continue;fi
-case "$op" in
-    -r|--rebase)
-        case $PROJECT_NAME in
-            dwm | st | dmenu)
-                rebase_make_install
-                shift
-                exit 0
-                ;;
-            *)
-                printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot rebase... exiting....\n"
-                shift
-                exit 1
-                ;;
-        esac
-    ;;
-    -p|--patch)
-        case $PROJECT_NAME in
-            dwm | st | dmenu)
-                clean_reset && install_patch
-                shift
-                exit 0
-                ;;
-            *)
-                printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot patch... exiting....\n"
-                shift
-                exit 1
-                ;;
-        esac
-    ;;
-    -d|--diff)
-        case $PROJECT_NAME in
-            dwm | st | dmenu)
-                create_diff
-                shift
-                exit 0
-                ;;
-            *)
-                printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot create diffs... exiting....\n"
-                shift
-                exit 1
-                ;;
-        esac
-    ;;
-    --debug)
-        case $PROJECT_NAME in
-            dwm | st | dmenu)
-                rebase_make
-                shift
-                exit 0
-                ;;
-            *)
-                printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot debug... exiting....\n"
-                shift
-                exit 1
-                ;;
-        esac
-    ;;
-    -h|--help)
-        helper
-        shift
-        exit 0
+while getopts "p:adimhr" option; do
+    case "${option}" in
+        p)
+            case $PROJECT_NAME in
+                dwm|st|dmenu)
+                    if [[ -f "${OPTARG}" ]]; then
+                        apply_patch "${OPTARG}" &&
+                        rebase "${OPTARG}"
+                    else
+                        echo "E: '${OPTARG}' is not a valid file name."
+                        exit 1
+                    fi
+                    ;;
+                *)
+                    printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot rebase... exiting....\n"
+                    exit 1
+                    ;;
+            esac
         ;;
-    *)
-        echo "E: Invalid option $1"
-        helper
-        shift
-        exit 1
+        r)
+            case $PROJECT_NAME in
+                dwm|st|dmenu)
+                    rebase_all
+                    ;;
+                *)
+                    printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot rebase... exiting....\n"
+                    exit 1
+                    ;;
+            esac
         ;;
-esac
+        a)
+            case $PROJECT_NAME in
+                dwm|st|dmenu)
+                    clean_reset && apply_custom_diffs
+                    ;;
+                *)
+                    printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot patch... exiting....\n"
+                    exit 1
+                    ;;
+            esac
+        ;;
+        i)
+            case $PROJECT_NAME in
+                dwm|st|dmenu)
+                    sudo make install
+                    clean_reset && git branch -D custom
+                    ;;
+                *)
+                    printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot patch... exiting....\n"
+                    exit 1
+                    ;;
+            esac
+        ;;
+        m)
+            case $PROJECT_NAME in
+                dwm|st|dmenu)
+                    make
+                    ;;
+                *)
+                    printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot patch... exiting....\n"
+                    exit 1
+                    ;;
+            esac
+        ;;
+        d)
+            case $PROJECT_NAME in
+                dwm|st|dmenu)
+                    create_diff
+
+                    ;;
+                *)
+                    printf "You are currently not in a suckless's software directory.\nRun this script after entering into a suckless's project directory.\nError: Cannot create diffs... exiting....\n"
+                    exit 1
+                    ;;
+            esac
+        ;;
+        h)
+            helper
+            ;;
+        *)
+            echo -e "E: Invalid option '$1'\n"
+            helper
+            exit 1
+            ;;
+    esac
 done
