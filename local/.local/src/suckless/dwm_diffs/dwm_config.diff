@@ -1,8 +1,8 @@
 diff --git a/config.def.h b/config.def.h
-index 1c0b587..dc6969b 100644
+index 1c0b587..d3c1b8b 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -1,53 +1,88 @@
+@@ -1,53 +1,89 @@
  /* See LICENSE file for copyright and license details. */
  
  /* appearance */
@@ -32,6 +32,7 @@ index 1c0b587..dc6969b 100644
 +static int topbar             = 1;        /* 0 means bottom bar */
 +static const char *fonts[]    = {
 +	"monospace:size=12:style=Bold",
++	"FontAwesome:size=10:style=Regular",
 +	"Font Awesome 5 Free Solid:size=10:style=Solid",
 +	"Font Awesome 5 Brands Regular:size=10:style=Regular",
 +	"Font Awesome 5 Free Regular:size=10:style=Regular",
@@ -94,7 +95,7 @@ index 1c0b587..dc6969b 100644
 -static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 -static const int nmaster     = 1;    /* number of clients in master area */
 -static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
-+static float mfact     = 0.57; /* factor of master area size [0.05..0.95] */
++static float mfact     = 0.50; /* factor of master area size [0.05..0.95] */
 +static int nmaster     = 1;    /* number of clients in master area */
 +static int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
  
@@ -119,7 +120,7 @@ index 1c0b587..dc6969b 100644
  	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
  	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
  
-@@ -56,26 +91,56 @@ static const Layout layouts[] = {
+@@ -56,26 +92,56 @@ static const Layout layouts[] = {
  
  /* commands */
  static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
@@ -184,7 +185,7 @@ index 1c0b587..dc6969b 100644
  	{ MODKEY,                       XK_space,  setlayout,      {0} },
  	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
  	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
-@@ -84,16 +149,18 @@ static Key keys[] = {
+@@ -84,16 +150,23 @@ static Key keys[] = {
  	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
  	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
  	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
@@ -210,10 +211,15 @@ index 1c0b587..dc6969b 100644
 +	TAGKEYS(                        XK_f,                      3)
 +	TAGKEYS(                        XK_g,                      4)
 +	{ MODKEY,                       XK_F4,      quit,           {0} },
++	{0,                             XF86XK_AudioMute,    spawn,    SHCMD("pamixer -t; pkill -RTMIN+10 dwmblocks") },
++	{0,                             XF86XK_AudioLowerVolume,    spawn,    SHCMD("pamixer -d 5 --allow-boost; pkill -RTMIN+10 dwmblocks") },
++	{0,                             XF86XK_AudioRaiseVolume,    spawn,    SHCMD("pamixer -i 5 --allow-boost; pkill -RTMIN+10 dwmblocks") },
++	{0,                             XF86XK_MonBrightnessUp,    spawn,    SHCMD("sudo xbacklight -inc 5") },
++	{0,                             XF86XK_MonBrightnessDown,    spawn,    SHCMD("sudo xbacklight -dec 5") },
  };
  
  /* button definitions */
-@@ -103,13 +170,83 @@ static Button buttons[] = {
+@@ -103,13 +176,83 @@ static Button buttons[] = {
  	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
  	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
  	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
