@@ -1,4 +1,4 @@
-(setq doom-font (font-spec :family "Roboto Mono" :size 14 :adstyle "Light")
+(setq doom-font (font-spec :family "Ubuntu Mono" :size 18 :adstyle "Regular")
       doom-variable-pitch-font (font-spec :family "sans"))
 
 (setq doom-theme 'doom-nord )
@@ -33,6 +33,13 @@
       org-journal-file-format "%d%m%Y.org"
       org-startup-folded 'overview
       org-ellipsis " ⤵" )
+
+(setq org-roam-capture-templates
+      '(("d" "default" plain (function org-roam--capture-get-point)
+       "%?"
+       :file-name "%(format-time-string \"%d-%m-%Y_%HH%M-${slug}\" (current-time) t)"
+       :head "#+title: ${title}\n"
+       :unnarrowed t)))
 
 (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●"))
 
