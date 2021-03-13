@@ -66,6 +66,9 @@ config.bind('<z><u><l>', 'spawn --userscript qute-pass --username-only')
 config.bind('<z><p><l>', 'spawn --userscript qute-pass --password-only')
 config.bind('<z><o><l>', 'spawn --userscript qute-pass --otp-only')
 
+# Yank selection
+config.bind('<y><y>', 'yank selection')
+
 # Tab configuration
 c.tabs.position = "left"
 c.tabs.title.format = "{index}"
