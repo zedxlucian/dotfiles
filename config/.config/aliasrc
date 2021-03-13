@@ -25,7 +25,6 @@ alias \
 alias \
 	v='nvim -c "let g:tty='\''$(tty)'\''"' \
 	ka="killall" \
-	lg="lazygit" \
 	g="git" \
 	sdn="sudo shutdown -h now" \
 	p="sudo pacman" \
@@ -39,7 +38,5 @@ alias \
 
 # Some other stuff
 alias \
-	mbsync="mbsync -c $XDG_CONFIG_HOME/isync/mbsyncrc" \
-	emacs="emacsclient_one_frame" \
-	ec="emacsclient -t" \
-	vault="cd ~/.local/share/Cryptomator/mnt/Vault"
+	vault="cd ~/.local/share/Cryptomator/mnt/Vault" \
+	po="sudo swapoff -a && pass open && sudo swapon -a"
