@@ -50,8 +50,5 @@ pidof dwmblocks || dwmblocks &
 # Caffeine
 pidof caffeine-ng || /usr/bin/caffeine &
 
-# Network Management
+# Network management
 pidof nm-applet || nm-applet &
-
-# Cryptomator
-pidof cryptomator || cryptomator &

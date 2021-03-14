@@ -26,7 +26,6 @@ alias \
 	v='nvim -c "let g:tty='\''$(tty)'\''"' \
 	ka="killall" \
 	g="git" \
-	sdn="sudo shutdown -h now" \
 	p="sudo pacman" \
 	gs="git status" \
 	ga="git add" \

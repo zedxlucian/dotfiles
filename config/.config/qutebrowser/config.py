@@ -2,7 +2,7 @@ import subprocess
 import os
 from qutebrowser.api import interceptor
 # Change the argument to True to still load settings configured via autoconfig.yml
-config.load_autoconfig(False)
+config.load_autoconfig(True)
 
 # Which cookies to accept. With QtWebEngine, this setting also controls
 # other features with tracking capabilities similar to those of cookies;
@@ -66,6 +66,8 @@ config.bind('<z><u><l>', 'spawn --userscript qute-pass --username-only')
 config.bind('<z><p><l>', 'spawn --userscript qute-pass --password-only')
 config.bind('<z><o><l>', 'spawn --userscript qute-pass --otp-only')
 
+# Toggle dark-mode
+config.bind('<Ctrl-o>', 'config-cycle colors.webpage.darkmode.enabled ;; restart')
 # Yank selection
 config.bind('<y><y>', 'yank selection')
 
@@ -149,5 +151,4 @@ c.colors.completion.item.selected.fg = xresources["*.foreground"]
 if xresources["*.background"] != "#F8F8F8":
     # c.qt.args = ['blink-settings=darkMode=4']
     # c.colors.webpage.prefers_color_scheme_dark = True
-    c.colors.webpage.darkmode.enabled = True
     c.hints.border = "1px solid #D8DEE9"
