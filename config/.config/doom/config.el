@@ -34,6 +34,13 @@
       org-startup-folded 'overview
       org-ellipsis " ⤵" )
 
+(setq org-roam-capture-templates
+      '(("d" "default" plain (function org-roam--capture-get-point)
+       "%?"
+       :file-name "%(format-time-string \"%d-%m-%Y_%HH%M-${slug}\" (current-time) t)"
+       :head "#+title: ${title}\n"
+       :unnarrowed t)))
+
 (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●"))
 
 (require 'org-tempo)

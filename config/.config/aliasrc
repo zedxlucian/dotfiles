@@ -37,4 +37,5 @@ alias \
 
 # Some other stuff
 alias \
-	vault="cd ~/.local/share/Cryptomator/mnt/Vault"
+	vault="cd ~/.local/share/Cryptomator/mnt/Vault" \
+	po="sudo swapoff -a && pass open && sudo swapon -a"

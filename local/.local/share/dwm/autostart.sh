@@ -24,7 +24,7 @@ xset r rate 300 50 &
 pidof xss-lock || xss-lock  -- betterlockscreen -l blur &
 
 # Cursor pointing left
- xsetroot -cursor_name left_ptr &
+xsetroot -cursor_name left_ptr &
 
 # Program that hides the mouse after 3 seconds of idle
 pidof unclutter || unclutter -idle 3 &

@@ -68,6 +68,8 @@ config.bind('<z><o><l>', 'spawn --userscript qute-pass --otp-only')
 
 # Toggle dark-mode
 config.bind('<Ctrl-o>', 'config-cycle colors.webpage.darkmode.enabled ;; restart')
+# Yank selection
+config.bind('<y><y>', 'yank selection')
 
 # Tab configuration
 c.tabs.position = "left"

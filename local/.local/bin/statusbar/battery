@@ -1,7 +1,6 @@
-#! /bin/sh
+#! /usr/bin/env bash
 
 bat=$(cat /sys/class/power_supply/BAT0/capacity)
-status=$(cat /sys/class/power_supply/BAT0/status)
 
 ramp10=
 ramp20=
@@ -28,5 +27,5 @@ elif [[ $bat -lt "80" ]]; then
 elif [[ $bat -lt "90" ]]; then
     echo "$ramp40 $bat%"
 elif [[ $bat -le "100" ]]; then
-    echo "$ramp100 $bat%"
+    echo "$ramp50 $bat%"
 fi
