@@ -15,45 +15,51 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'Yggdroot/indentLine'
+Plug 'bluz71/vim-nightfly-guicolors'
+Plug 'vim-airline/vim-airline'
 call plug#end()
 
+" Some basics:
 set go=a
 set mouse=a
 set nohlsearch
 set clipboard+=unnamedplus
 set termguicolors
+colorscheme nightfly
+set cursorline
+set nocompatible
+filetype plugin on
+syntax on
+set encoding=utf-8
+set hidden
+set noswapfile
+set path=.,**
+set wildmenu
+let $RTP=split(&runtimepath, ',')[0]
+set rtp+=/usr/bin/fzf
+let $RC="$HOME/.config/nvim/init.vim"
 
-" Some basics:
-	set nocompatible
-	filetype plugin on
-	syntax on
-	set encoding=utf-8
-	set hidden
-	set noswapfile
-	set path=.,**
-	set wildmenu
-	let $RTP=split(&runtimepath, ',')[0]
-	set rtp+=/usr/bin/fzf
-	let $RC="$HOME/.config/nvim/init.vim"
+" Escape in insert mode
+inoremap jk <Esc>
 
 " Enable autocompletion:
-	set wildmode=longest,list,full
+set wildmode=longest,list,full
 
 " Disables automatic commenting on newline:
-	autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
 " Splits open at the bottom and right, which is non-retarded, unlike vim defaults.
-	set splitbelow splitright
+set splitbelow splitright
 
 " Shortcutting split navigation, saving a keypress:
-	map <C-h> <C-w>h
-	map <C-j> <C-w>j
-	map <C-k> <C-w>k
-	map <C-l> <C-w>l
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
 
 " Automatically deletes all trailing whitespace and newlines at end of file on save.
-	autocmd BufWritePre * %s/\s\+$//e
-	autocmd BufWritepre * %s/\n\+\%$//e
+autocmd BufWritePre * %s/\s\+$//e
+autocmd BufWritepre * %s/\n\+\%$//e
 
 " FZF settings
 " This is the default extra key bindings
@@ -71,51 +77,28 @@ let g:fzf_history_dir = '~/.local/share/fzf-history'
 map <C-f> :Files<CR>
 map <leader>b :Buffers<CR>
 nnoremap <leader>a :Ag<CR>
+nnoremap <silent> <leader>r :Rg<CR>
 nnoremap <leader>t :Tags<CR>
 nnoremap <leader>m :Marks<CR>
 
 
 let g:fzf_tags_command = 'ctags -R'
+let g:fzf_preview_window = []
 
 "Get Files
 command! -bang -nargs=? -complete=dir Files
-    \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)
+    \ call fzf#vim#files(<q-args>, <bang>0)
 
 
 " Get text in files with Rg
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
-  \   fzf#vim#with_preview(), <bang>0)
-
-" Ripgrep advanced
-function! RipgrepFzf(query, fullscreen)
-  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case %s || true'
-  let initial_command = printf(command_fmt, shellescape(a:query))
-  let reload_command = printf(command_fmt, '{q}')
-  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
-endfunction
-
-command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1, <bang>0)
 
 " Git grep
 command! -bang -nargs=* GGrep
   \ call fzf#vim#grep(
-  \   'git grep --line-number '.shellescape(<q-args>), 0,
-  \   fzf#vim#with_preview({'dir': systemlist('git rev-parse --show-toplevel')[0]}), <bang>0)
+  \   'git grep --line-number '.shellescape(<q-args>), 0, {'dir': systemlist('git rev-parse --show-toplevel')[0]}, <bang>0)
 
 " Hexokinase settings
 let g:Hexokinase_highlighters = [ 'backgroundfull' ]
-
-" NetRW
-let ghregex='\(^\|\s\s\)\zs\.\S\+'
-let g:netrw_list_hide=ghregex
-
-let g:netrw_liststyle= 3    " show the tree listing
-let g:netrw_banner=0
-
-let g:netrw_winsize = 0         "   set default window size to be always equal
-let g:netrw_preview = 1		    "	open splits to the right
-
-autocmd Filetype netrw setl bufhidden=delete

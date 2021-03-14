@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 1c0b587..dc6969b 100644
+index 1c0b587..2e30026 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -1,53 +1,88 @@
@@ -78,23 +78,23 @@ index 1c0b587..dc6969b 100644
 -	/* class      instance    title       tags mask     isfloating   monitor */
 -	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 -	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
-+	/* class           instance            title       tags mask     isfloating   monitor */
-+	{ NULL,            "lxappearance",     NULL,       0,            1,           -1 },
-+	{ NULL,            "megasync",         NULL,       0,            1,           -1 },
-+	{ "mpv",            "gl",              NULL,       0,            1,           -1 },
-+	{ NULL,            "pavucontrol",      NULL,       0,            1,           -1 },
-+	{ "java",          "java",             NULL,       0,            1,           -1 },
-+	{ "qutebrowser",   "qutebrowser",      NULL,       1 << 1,       0,           -1 },
-+	{ "emacs",          "emacs",           NULL,       1 << 2,       0,           -1 },
-+	{ NULL,		       "spterm",	       NULL,	   SPTAG(0),	 1,			  -1 },
-+	{ NULL,		       "spncspot",	       NULL,	   SPTAG(1),	 1,			  -1 },
++	/* class               instance            title       tags mask     isfloating   monitor */
++	{ NULL,                "lxappearance",     NULL,       0,            1,           -1 },
++	{ NULL,                "megasync",         NULL,       0,            1,           -1 },
++	{ "mpv",                "gl",              NULL,       0,            1,           -1 },
++	{ NULL,                "pavucontrol",      NULL,       0,            1,           -1 },
++	{ "java",              "java",             NULL,       0,            1,           -1 },
++	{ "qutebrowser",       "qutebrowser",      NULL,       1 << 1,       0,           -1 },
++	{ "Transmission-gtk",  "transmission-gtk", NULL,       1 << 3,       0,           -1 },
++	{ NULL,		           "spterm",	       NULL,	   SPTAG(0),	 1,			  -1 },
++	{ NULL,		           "spncspot",	       NULL,	   SPTAG(1),	 1,			  -1 },
  };
  
  /* layout(s) */
 -static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 -static const int nmaster     = 1;    /* number of clients in master area */
 -static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
-+static float mfact     = 0.57; /* factor of master area size [0.05..0.95] */
++static float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 +static int nmaster     = 1;    /* number of clients in master area */
 +static int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
  
