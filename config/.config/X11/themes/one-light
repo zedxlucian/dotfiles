@@ -1,0 +1,68 @@
+! Custom
+! Original theme https://github.com/nathanbuchar/atom-one-dark-terminal
+*.foreground:    #383A42
+*.background:    #F9F9F9
+*.cursorColor:   #383A42
+*.highlightColor:#3A3F4B
+
+! Negro y gris
+*.color0:        #000000
+*.color8:        #383A42
+! Rojos
+*.color1:        #E45649
+*.color9:        #E45649
+! Verde
+*.color2:        #50A14F
+*.color10:       #50A14F
+! Amarillo
+*.color3:        #986801
+*.color11:       #986801
+! Azul
+*.color4:        #4078F2
+*.color12:       #4078F2
+! Magenta
+*.color5:        #A626A4
+*.color13:       #A626A4
+! Cyan
+*.color6:        #0184BC
+*.color14:       #0184BC
+! Blanco
+*.color7:        #A0A1A7
+*.color15:       #FFFFFF
+
+#define nord0 #2E3440
+#define nord1 #3B4252
+#define nord2 #434C5E
+#define nord3 #4C566A
+#define nord4 #D8DEE9
+#define nord5 #E5E9F0
+#define nord6 #ECEFF4
+#define nord7 #8FBCBB
+#define nord8 #88C0D0
+#define nord9 #81A1C1
+#define nord10 #5E81AC
+#define nord11 #BF616A
+#define nord12 #D08770
+#define nord13 #EBCB8B
+#define nord14 #A3BE8C
+#define nord15 #B48EAD
+
+! DWM
+dwm.normbgcolor: #F9F9F9
+dwm.normfgcolor: #383A42
+dwm.normbordercolor: #F9F9F9
+
+dwm.selfgcolor: #383A42
+dwm.selbgcolor: #F9F9F9
+dwm.selbordercolor: #0184BC
+
+! DMENU
+dmenu.background: #F9F9F9
+dmenu.foreground: #383A42
+dmenu.selbackground: #0184BC
+dmenu.selforeground: #F9F9F9
+
+! ST
+st.alpha: 1.0
+st.background: #F9F9F9
+st.foreground: #000000

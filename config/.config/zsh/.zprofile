@@ -9,7 +9,7 @@ export PATH="$PATH:$HOME/.gem/ruby/2.7.0/bin"
 export EDITOR="emacsclient -c"
 export VISUAL="emacsclient -c"
 export TERMINAL="st"
-export BROWSER="qutebrowser"
+export BROWSER="firefox"
 export TIME_STYLE="+%d-%m-%Y %H:%M:%S"
 export COLORTERM="truecolor"
 # ~/ Clean-up:
@@ -29,10 +29,10 @@ VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1
 # FZF ENV
 export FZF_DEFAULT_COMMAND="fd -H . '/etc' $HOME '/usr'"
 export FZF_DEFAULT_OPTS="--layout=reverse --height 40%"
-export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
- --color fg:#D8DEE9,bg:#2E3440,hl:#A3BE8C,fg+:#D8DEE9,bg+:#434C5E,hl+:#A3BE8C
- --color pointer:#BF616A,info:#4C566A,spinner:#4C566A,header:#4C566A,prompt:#81A1C1,marker:#EBCB8B
- '
+# export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+#  --color fg:#D8DEE9,bg:#2E3440,hl:#A3BE8C,fg+:#D8DEE9,bg+:#434C5E,hl+:#A3BE8C
+#  --color pointer:#BF616A,info:#4C566A,spinner:#4C566A,header:#4C566A,prompt:#81A1C1,marker:#EBCB8B
+# '
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200' --select-1 --exit-0"
 
 # Fontpreview ENV

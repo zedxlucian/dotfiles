@@ -1,4 +1,4 @@
-(setq doom-font (font-spec :family "Ubuntu Mono" :size 18 :adstyle "Regular")
+(setq doom-font (font-spec :family "Ubuntu Mono" :size 24 :adstyle "Regular")
       doom-variable-pitch-font (font-spec :family "sans"))
 
 (setq doom-theme 'doom-nord )
