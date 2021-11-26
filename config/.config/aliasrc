@@ -19,7 +19,6 @@ alias l.='exa -a | egrep "^\."'
 alias \
 	grep="grep --color=auto" \
 	diff="diff --color=auto" \
-	ccat="highlight --out-format=ansi"
 
 # These common commands are just too long! Abbreviate them.
 alias \
@@ -35,7 +34,3 @@ alias \
 	gr="git rm" \
 	..="cd .."
 
-# Some other stuff
-alias \
-	vault="cd ~/.local/share/Cryptomator/mnt/Vault" \
-	po="sudo swapoff -a && pass open && sudo swapon -a"
