@@ -1,6 +1,0 @@
-#!/bin/sh
-
-temp=$(sensors | awk '/Core 0/ {print $3}')
-icon=""
-
-echo "$icon $temp"

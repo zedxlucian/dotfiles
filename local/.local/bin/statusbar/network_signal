@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# cmd="$(cat /sys/class/net/w*/operstate)" ## Uncomment this if you have WiFi network
-cmd="$(cat /sys/class/net/e*/operstate 2>/dev/null)" ## Uncomment this if you have wired network.
-iconDown=睊
-iconUp=
-[ "$cmd" = "up" ] && echo "$iconUp" || echo "$iconDown"

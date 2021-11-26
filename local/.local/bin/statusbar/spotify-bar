@@ -1,9 +1,0 @@
-#! /bin/sh
-
-# This script displays in the status bar the current artist and the title of the song.
-#
-status=$(playerctl metadata --format '{{artist}} - {{title}}' | cut -c 1-50)
-runstate=$(playerctl status)
-icon=
-
-[ "$runstate" = "Playing" ] && echo "$icon $status" || echo ""

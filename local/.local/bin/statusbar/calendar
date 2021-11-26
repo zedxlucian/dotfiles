@@ -1,7 +1,0 @@
-#!/bin/sh
-
-cmdDate=$(LC_TIME=fr_FR.UTF-8 date '+%A %d %b')
-cmdTime=$(date '+%H:%M')
-iconDate=
-iconTime=
-echo "$iconDate $cmdDate $iconTime $cmdTime"
