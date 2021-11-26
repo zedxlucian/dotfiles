@@ -1,8 +1,7 @@
-(setq doom-font (font-spec :family "Ubuntu Mono" :size 24 :adstyle "Regular")
+(setq doom-font (font-spec :family "Roboto Mono" :size 14 :adstyle "Regular")
       doom-variable-pitch-font (font-spec :family "sans"))
 
-(setq doom-theme 'doom-nord )
-(setq display-line-numbers-type 'relative)
+(setq doom-theme 'doom-ayu-mirage)
 
 (setq user-full-name "Lydien SANDANASAMY"
       user-mail-address "s.lydien@icloud.com")
@@ -48,4 +47,4 @@
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 
-(add-hook! dired-mode 'dired-hide-details-mode)
+(map! "C-c C-s" 'counsel-tramp)

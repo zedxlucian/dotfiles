@@ -48,5 +48,5 @@
 ;(unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
-(package! modus-themes)
-(package! base16-theme)
+(package! counsel-tramp)
+(package! vagrant-tramp)
